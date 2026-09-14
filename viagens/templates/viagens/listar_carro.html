@@ -1,0 +1,122 @@
+{% extends "viagens/base_generic.html" %}
+
+{% block title %}Veículos cadastrados | SEMJIDH{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5 vehicle-list-page">
+
+    <div class="entity-page-header">
+        <div>
+            <span class="entity-eyebrow">Cadastro operacional</span>
+            <h1>Veículos cadastrados</h1>
+            <p>
+                Consulte os veículos disponíveis para designação nas viagens.
+            </p>
+        </div>
+
+        <a href="{% url 'cadastrar_carro' %}" class="btn btn-primary entity-new-button">
+            <span aria-hidden="true">+</span>
+            Cadastrar veículo
+        </a>
+    </div>
+
+    {% if carros %}
+        <div class="entity-list-summary">
+            <span class="entity-list-summary__icon" aria-hidden="true">✓</span>
+
+            <span>
+                {{ carros|length }} veículo{{ carros|length|pluralize:"s" }} cadastrado{{ carros|length|pluralize:"s" }}.
+            </span>
+        </div>
+
+        <section class="entity-list" aria-label="Lista de veículos">
+            {% for carro in carros %}
+                <article class="entity-card">
+
+                    <div class="entity-card-icon entity-card-icon--vehicle" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="1.8" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M5 17h14"></path>
+                            <path d="M6 17l1-8h10l1 8"></path>
+                            <path d="M8 9V5h8v4"></path>
+                            <path d="M5 17v2"></path>
+                            <path d="M19 17v2"></path>
+                            <circle cx="8" cy="18" r="1.5"></circle>
+                            <circle cx="16" cy="18" r="1.5"></circle>
+                        </svg>
+                    </div>
+
+                    <div class="entity-card-content">
+                        <span class="entity-card-label">Veículo</span>
+
+                        <h2 class="entity-card-title">
+                            {{ carro }}
+                        </h2>
+
+                        <div class="vehicle-card-details">
+                            <span>
+                                <strong>Marca:</strong>
+                                {{ carro.marca }}
+                            </span>
+
+                            <span>
+                                <strong>Modelo:</strong>
+                                {{ carro.modelo }}
+                            </span>
+
+                            <span class="vehicle-plate">
+                                <strong>Placa:</strong>
+                                {{ carro.placa }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <form
+                        action="{% url 'apagar_carro' carro.id %}"
+                        method="post"
+                        class="entity-delete-form"
+                        onsubmit="return confirm('Tem certeza de que deseja apagar o veículo {{ carro }}?');"
+                    >
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            Apagar
+                        </button>
+                    </form>
+
+                </article>
+            {% endfor %}
+        </section>
+
+    {% else %}
+        <section class="entity-empty-state">
+            <div class="entity-empty-state__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <path d="M5 17h14"></path>
+                    <path d="M6 17l1-8h10l1 8"></path>
+                    <path d="M8 9V5h8v4"></path>
+                    <path d="M5 17v2"></path>
+                    <path d="M19 17v2"></path>
+                    <circle cx="8" cy="18" r="1.5"></circle>
+                    <circle cx="16" cy="18" r="1.5"></circle>
+                </svg>
+            </div>
+
+            <h2>Nenhum veículo cadastrado</h2>
+
+            <p>
+                Cadastre os veículos disponíveis para que possam ser designados
+                às solicitações de viagem.
+            </p>
+
+            <a href="{% url 'cadastrar_carro' %}" class="btn btn-primary">
+                Cadastrar primeiro veículo
+            </a>
+        </section>
+    {% endif %}
+
+</div>
+{% endblock %}

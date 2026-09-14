@@ -1,0 +1,143 @@
+{% extends "viagens/base_generic.html" %}
+
+{% block content %}
+<div class="container py-4 dashboard">
+
+    <section class="dashboard-banner mb-5">
+        <div class="dashboard-banner-content">
+            <span class="dashboard-eyebrow">Sistema institucional</span>
+
+            <h1 class="dashboard-title">Gestão de Viagens</h1>
+
+            <p class="dashboard-description">
+                Solicite, acompanhe e administre os deslocamentos oficiais
+                da SEMJIDH em um único lugar.
+            </p>
+
+            <div class="dashboard-actions">
+                <a href="/viagens/solicitar_viagem/" class="btn dashboard-btn-primary">
+                    <span aria-hidden="true">+</span>
+                    Nova solicitação
+                </a>
+
+                <a href="/viagens/listar_viagens/" class="btn dashboard-btn-secondary">
+                    Ver viagens
+                    <span aria-hidden="true">→</span>
+                </a>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="dashboard-section-heading">
+        <span class="dashboard-eyebrow dashboard-eyebrow-dark">Acesso rápido</span>
+        <h2>O que você deseja fazer?</h2>
+        <p>Selecione uma opção para continuar.</p>
+    </section>
+
+    <section class="row g-3">
+        <div class="col-12 col-md-6">
+            <a href="/viagens/solicitar_viagem/" class="dashboard-action-card dashboard-action-card-highlight">
+                <span class="dashboard-card-icon dashboard-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+                </span>
+
+                <span class="dashboard-card-text">
+                    <strong>Solicitar viagem</strong>
+                    <small>Registre uma nova solicitação de deslocamento.</small>
+                </span>
+
+                <span class="dashboard-card-arrow" aria-hidden="true">→</span>
+            </a>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <a href="/viagens/listar_viagens/" class="dashboard-action-card">
+                <span class="dashboard-card-icon dashboard-icon-purple">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+                        <path d="M16 2v4"></path>
+                        <path d="M8 2v4"></path>
+                        <path d="M3 10h18"></path>
+                        <path d="M8 14h3"></path>
+                        <path d="M8 17h6"></path>
+                    </svg>
+                </span>
+
+                <span class="dashboard-card-text">
+                    <strong>Acompanhar viagens</strong>
+                    <small>Consulte solicitações pendentes, atribuídas e concluídas.</small>
+                </span>
+
+                <span class="dashboard-card-arrow" aria-hidden="true">→</span>
+            </a>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <a href="{% url 'listar_carros' %}" class="dashboard-action-card">
+                <span class="dashboard-card-icon dashboard-icon-orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M5 17h14"></path>
+                        <path d="M6 17l1-8h10l1 8"></path>
+                        <path d="M8 9V5h8v4"></path>
+                        <path d="M5 17v2"></path>
+                        <path d="M19 17v2"></path>
+                        <circle cx="8" cy="18" r="1.5"></circle>
+                        <circle cx="16" cy="18" r="1.5"></circle>
+                    </svg>
+                </span>
+
+                <span class="dashboard-card-text">
+                    <strong>Gerenciar veículos</strong>
+                    <small>Cadastre e consulte os veículos disponíveis.</small>
+                </span>
+
+                <span class="dashboard-card-arrow" aria-hidden="true">→</span>
+            </a>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <a href="{% url 'listar_motoristas' %}" class="dashboard-action-card">
+                <span class="dashboard-card-icon dashboard-icon-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4"></circle>
+                        <path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6"></path>
+                    </svg>
+                </span>
+
+                <span class="dashboard-card-text">
+                    <strong>Gerenciar motoristas</strong>
+                    <small>Cadastre e consulte os motoristas responsáveis.</small>
+                </span>
+
+                <span class="dashboard-card-arrow" aria-hidden="true">→</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="dashboard-help">
+        <span class="dashboard-help-icon" aria-hidden="true">i</span>
+
+        <div>
+            <h2>Como usar o sistema</h2>
+            <p>
+                Registre a solicitação da viagem e informe os dados necessários.
+                Em seguida, a equipe responsável pode atribuir um veículo e um
+                motorista disponíveis.
+            </p>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

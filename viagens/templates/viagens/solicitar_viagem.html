@@ -1,0 +1,253 @@
+{% extends "viagens/base_generic.html" %}
+
+{% block title %}Solicitar Viagem | SEMJIDH{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5">
+
+    <div class="request-page-header">
+        <div>
+            <span class="request-eyebrow">Nova solicitação</span>
+            <h1>Solicitar viagem</h1>
+            <p>
+                Preencha as informações abaixo para registrar a solicitação
+                de deslocamento oficial.
+            </p>
+        </div>
+
+        <a href="{% url 'listar_viagens' %}" class="btn btn-outline-primary request-back-button">
+            <span aria-hidden="true">←</span>
+            Ver viagens
+        </a>
+    </div>
+
+    <div class="request-layout">
+        <aside class="request-info-card">
+            <div class="request-info-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
+                    <path d="M12 16v-4"></path>
+                    <path d="M12 8h.01"></path>
+                </svg>
+            </div>
+
+            <h2>Antes de enviar</h2>
+
+            <p>
+                Informe os dados da viagem com atenção. Depois do registro,
+                a equipe responsável poderá designar veículo e motorista.
+            </p>
+
+            <ul class="request-info-list">
+                <li>Confira as datas e os horários.</li>
+                <li>Informe todos os servidores que participarão.</li>
+                <li>Selecione o setor solicitante correto.</li>
+            </ul>
+        </aside>
+
+        <form method="post" class="request-form" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <section class="request-form-section">
+                <div class="request-section-heading">
+                    <span class="request-section-number">1</span>
+
+                    <div>
+                        <h2>Dados do deslocamento</h2>
+                        <p>Informe o destino, a saída e o veículo necessário.</p>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="{{ form.destino.id_for_label }}" class="form-label">
+                            Destino <span class="required-mark">*</span>
+                        </label>
+
+                        {{ form.destino }}
+
+                        {% for error in form.destino.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="{{ form.veiculo.id_for_label }}" class="form-label">
+                            Veículo solicitado <span class="required-mark">*</span>
+                        </label>
+
+                        {{ form.veiculo }}
+
+                        {% for error in form.veiculo.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="{{ form.local_partida.id_for_label }}" class="form-label">
+                            Local de saída <span class="required-mark">*</span>
+                        </label>
+
+                        {{ form.local_partida }}
+
+                        {% for error in form.local_partida.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <section class="request-form-section">
+                <div class="request-section-heading">
+                    <span class="request-section-number">2</span>
+
+                    <div>
+                        <h2>Datas e horários</h2>
+                        <p>Informe a previsão de ida e retorno.</p>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label for="{{ form.data_ida.id_for_label }}" class="form-label">
+                            Data de saída <span class="required-mark">*</span>
+                        </label>
+
+                        {{ form.data_ida }}
+
+                        {% for error in form.data_ida.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="{{ form.horario_ida.id_for_label }}" class="form-label">
+                            Horário de saída
+                        </label>
+
+                        {{ form.horario_ida }}
+
+                        {% for error in form.horario_ida.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="{{ form.data_volta.id_for_label }}" class="form-label">
+                            Data de retorno <span class="required-mark">*</span>
+                        </label>
+
+                        {{ form.data_volta }}
+
+                        {% for error in form.data_volta.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="{{ form.horario_volta.id_for_label }}" class="form-label">
+                            Previsão de retorno
+                        </label>
+
+                        {{ form.horario_volta }}
+
+                        {% for error in form.horario_volta.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <section class="request-form-section">
+                <div class="request-section-heading">
+                    <span class="request-section-number">3</span>
+
+                    <div>
+                        <h2>Responsável e participantes</h2>
+                        <p>Identifique os servidores e o setor solicitante.</p>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="{{ form.servidores.id_for_label }}" class="form-label">
+                            Servidores participantes <span class="required-mark">*</span>
+                        </label>
+
+                        {{ form.servidores }}
+
+                        <small class="form-help">
+                            Informe os nomes dos servidores que participarão da viagem.
+                        </small>
+
+                        {% for error in form.servidores.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="{{ form.setor.id_for_label }}" class="form-label">
+                            Setor requisitante <span class="required-mark">*</span>
+                        </label>
+
+                        {{ form.setor }}
+
+                        {% for error in form.setor.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="{{ form.solicitante.id_for_label }}" class="form-label">
+                            Solicitante <span class="required-mark">*</span>
+                        </label>
+
+                        {{ form.solicitante }}
+
+                        {% for error in form.solicitante.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-12">
+                        <label for="{{ form.processo.id_for_label }}" class="form-label">
+                            Número do processo
+                        </label>
+
+                        {{ form.processo }}
+
+                        <small class="form-help">
+                            Campo opcional. Preencha se houver processo administrativo vinculado.
+                        </small>
+
+                        {% for error in form.processo.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <div class="request-form-actions">
+                <a href="{% url 'listar_viagens' %}" class="btn btn-light request-cancel-button">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="btn btn-primary request-submit-button">
+                    <span aria-hidden="true">✓</span>
+                    Enviar solicitação
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+﻿# Variáveis de ambiente e credenciais
+.env
+.env.*
+
+# Banco de desenvolvimento local
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+
+# Ambientes virtuais Python
+venv/
+.venv/
+env/
+ENV/
+
+# Arquivos estáticos gerados pelo collectstatic
+staticfiles/
+
+# Cache e arquivos Python compilados
+__pycache__/
+*.py[cod]
+*.class
+
+# Logs
+*.log
+
+# Configuração de editores e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Arquivos temporários e backups
+*.bak
+*.tmp
