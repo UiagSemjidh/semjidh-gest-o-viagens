@@ -122,7 +122,10 @@ WSGI_APPLICATION = "semjidhapp.wsgi.application"
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=env("DATABASE_URL"),
+        default=env(
+            "DATABASE_URL",
+            default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        ),
         conn_max_age=600,
         conn_health_checks=True,
     )
@@ -210,5 +213,5 @@ else:
     EMAIL_PORT = env.int("EMAIL_PORT", default=587)
     EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
     EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
-    EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-    EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+    EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+    EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
