@@ -1610,7 +1610,9 @@ form textarea:focus {
     }
 }
 
-/* Motoristas: complemento das classes entity-* */
+/* =========================================================
+   Motoristas: cards, contatos e ações
+   ========================================================= */
 
 .entity-card-icon--driver {
     color: #16774c;
@@ -1622,26 +1624,391 @@ form textarea:focus {
     background: #dcf5e8;
 }
 
-.driver-card-email {
+/* Informações de contato */
+
+.driver-card-email,
+.driver-card-phone {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 0.22rem;
+    min-width: 0;
+}
+
+.driver-card-email {
+    margin-top: 0.7rem;
+}
+
+.driver-card-phone {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #edf1f5;
+}
+
+.driver-card-email__label,
+.driver-card-phone__label {
+    color: #78889b;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.driver-card-email a,
+.driver-card-phone a {
+    overflow: hidden;
+    width: fit-content;
+    max-width: 100%;
+    color: var(--primary, #1769aa);
+    font-size: 0.9rem;
+    line-height: 1.35;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.driver-card-email a:hover,
+.driver-card-phone a:hover {
+    color: var(--primary-dark, #125b92);
+    text-decoration: underline;
+}
+
+.driver-card-empty {
+    color: #7d8b9b;
+    font-size: 0.88rem;
+    font-style: italic;
+    line-height: 1.35;
+}
+
+/* Ações do card */
+
+.entity-card-actions {
+    display: flex;
+    flex: 0 0 92px;
+    flex-direction: column;
+    gap: 0.55rem;
+    align-items: stretch;
+    justify-content: center;
+    align-self: stretch;
+}
+
+.entity-card-actions .btn,
+.entity-card-actions .entity-delete-form,
+.entity-card-actions .entity-delete-form button {
+    width: 100%;
+}
+
+.entity-delete-form {
+    margin: 0;
+}
+
+/* Em telas menores, os botões ficam lado a lado abaixo do conteúdo. */
+
+@media (max-width: 680px) {
+    .entity-card-actions {
+        width: 100%;
+        flex-basis: auto;
+        flex-direction: row;
+        justify-content: flex-start;
+        margin-top: 1rem;
+    }
+
+    .entity-card-actions .btn,
+    .entity-card-actions .entity-delete-form {
+        width: auto;
+        flex: 1;
+    }
+}
+
+/* =========================================================
+   Edição de motorista
+   ========================================================= */
+
+.motorista-edit-page {
+    width: min(100% - 2rem, 1120px);
+    margin: 0 auto;
+    padding: 2.5rem 0 4rem;
+}
+
+.motorista-edit-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.page-header-copy {
+    min-width: 0;
+}
+
+.back-link {
+    display: inline-flex;
     align-items: center;
-    gap: 7px;
-    margin-top: 7px;
-    color: #596d80;
-    font-size: 0.87rem;
+    margin-bottom: 1.2rem;
+    color: var(--primary, #1769aa);
+    font-size: 0.9rem;
+    font-weight: 750;
+    text-decoration: none;
 }
 
-.driver-card-email__label {
-    color: #596d80;
+.back-link:hover {
+    color: var(--primary-dark, #125b92);
+    text-decoration: underline;
+}
+
+.page-eyebrow,
+.form-panel-kicker {
+    margin: 0 0 0.4rem;
+    color: #16774c;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.page-title {
+    margin: 0;
+    color: #11243d;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+}
+
+.page-subtitle {
+    max-width: 620px;
+    margin: 0.8rem 0 0;
+    color: #617087;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.page-subtitle strong {
+    color: #11243d;
+}
+
+.page-header-mark {
+    display: grid;
+    width: 84px;
+    height: 84px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid #cdebdc;
+    border-radius: 24px;
+    color: #16774c;
+    background: linear-gradient(145deg, #e5f8ed, #f4fbf7);
+    box-shadow: 0 12px 28px rgba(27, 91, 63, 0.1);
+}
+
+.page-header-mark svg {
+    width: 42px;
+    height: 42px;
+}
+
+.form-panel {
+    overflow: hidden;
+    border: 1px solid #e1e8f0;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 18px 45px rgba(22, 43, 70, 0.09);
+}
+
+.form-panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.6rem 2rem;
+    border-bottom: 1px solid #edf1f5;
+    background: linear-gradient(135deg, #f9fbfd, #ffffff);
+}
+
+.form-panel-heading h2 {
+    margin: 0;
+    color: #172b46;
+    font-size: 1.2rem;
+}
+
+.form-panel-kicker {
+    margin-bottom: 0.3rem;
+    color: #77869a;
+    font-size: 0.68rem;
+}
+
+.form-panel-id {
+    padding: 0.45rem 0.7rem;
+    border: 1px solid #dbe5ef;
+    border-radius: 999px;
+    color: #617087;
+    background: #f7fafd;
+    font-size: 0.78rem;
     font-weight: 700;
+    white-space: nowrap;
 }
 
-.driver-card-email a {
-    color: var(--primary);
-    overflow-wrap: anywhere;
+.driver-form {
+    padding: 2rem;
 }
 
-.driver-card-email a:hover {
-    color: var(--primary-dark);
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.3rem 1.5rem;
+}
+
+.form-field {
+    min-width: 0;
+}
+
+.form-field--full {
+    grid-column: 1 / -1;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 0.48rem;
+    color: #263b56;
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.form-field input {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    box-sizing: border-box;
+    padding: 0.78rem 0.9rem;
+    border: 1px solid #cfd9e5;
+    border-radius: 10px;
+    outline: none;
+    color: #172b46;
+    background: #ffffff;
+    font: inherit;
+    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.form-field input::placeholder {
+    color: #9aa8b7;
+}
+
+.form-field input:hover {
+    border-color: #aebdcd;
+}
+
+.form-field input:focus {
+    border-color: #2774b4;
+    background: #fbfdff;
+    box-shadow: 0 0 0 4px rgba(39, 116, 180, 0.13);
+}
+
+.form-field-help {
+    display: block;
+    margin-top: 0.45rem;
+    color: #7d8b9b;
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.form-field-error {
+    margin-top: 0.42rem;
+    color: #b42318;
+    font-size: 0.8rem;
+}
+
+.form-field-error ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.form-alert {
+    margin-bottom: 1.4rem;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    font-size: 0.88rem;
+}
+
+.form-alert--error {
+    border: 1px solid #f1b9b4;
+    color: #9f1c15;
+    background: #fff4f2;
+}
+
+.form-panel-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid #edf1f5;
+}
+
+.form-required-note {
+    max-width: 430px;
+    margin: 0;
+    color: #7d8b9b;
+    font-size: 0.82rem;
+    line-height: 1.45;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    flex: 0 0 auto;
+}
+
+@media (max-width: 720px) {
+    .motorista-edit-page {
+        width: min(100% - 1.2rem, 1120px);
+        padding-top: 1.5rem;
+    }
+
+    .motorista-edit-page .page-header {
+        align-items: center;
+        margin-bottom: 1.35rem;
+    }
+
+    .page-header-mark {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+    }
+
+    .page-header-mark svg {
+        width: 31px;
+        height: 31px;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .form-panel-heading,
+    .driver-form {
+        padding: 1.25rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .form-field--full {
+        grid-column: auto;
+    }
+
+    .form-panel-footer {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .form-actions {
+        width: 100%;
+    }
+
+    .form-actions .btn {
+        flex: 1;
+    }
 }
