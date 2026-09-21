@@ -24,6 +24,28 @@ def listar_viagens(request):
     }
     return render(request, 'viagens/listar_viagens.html', context)
 
+def editar_motorista(request, motorista_id):
+    motorista = get_object_or_404(Motorista, id=motorista_id)
+
+    if request.method == "POST":
+        form = MotoristaForm(request.POST, instance=motorista)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Dados do motorista atualizados com sucesso.")
+            return redirect("listar_motoristas")
+    else:
+        form = MotoristaForm(instance=motorista)
+
+    return render(
+        request,
+        "viagens/editar_motorista.html",
+        {
+            "form": form,
+            "motorista": motorista,
+        },
+    )
+
 def solicitar_viagem(request):
     if request.method == 'POST':
         form = ViagemForm(request.POST)
@@ -47,26 +69,7 @@ def designar_motorista(request, viagem_id):
         viagem.status = 'Atribuída'
         viagem.save()
 
-        assunto = "VIAGEM SOLICITADA!"
-        corpo_email = f""" 
-                Você foi designado para a seguinte viagem:
-
-                Destino: {viagem.destino}
-                Data de ida: {viagem.data_ida.strftime('%d/%m/%Y')}
-                Data de volta: {viagem.data_volta.strftime('%d/%m/%Y')}
-                Solicitante: {viagem.solicitante}
-
-                Favor confirmar sua disponibilidade.
-                """
-        
-        send_mail(
-            assunto,
-            corpo_email,
-            settings.DEFAULT_FROM_EMAIL,
-            [motorista.email],
-            fail_silently=False,
-        )
-        messages.success(request, 'Motorista designado com sucesso e notificado por e-mail!')
+        messages.success(request, 'Motorista designado com sucesso!')
         return redirect('listar_viagens')
     return render(request, 'viagens/designar_motorista.html', {'viagem': viagem, 'motoristas': motoristas})
 

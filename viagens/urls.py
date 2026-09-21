@@ -15,4 +15,5 @@ urlpatterns = [
     path('cadastrar_carro/', views.cadastrar_carro, name='cadastrar_carro'),
     path('designar_carro/<int:viagem_id>/', views.designar_carro, name='designar_carro'),
     path('viagem/<int:viagem_id>/volta-real/', views.atualizar_volta_real, name='atualizar_volta_real'),
+    path("motoristas/<int:motorista_id>/editar/",views.editar_motorista,name="editar_motorista",),
 ]

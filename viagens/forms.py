@@ -60,7 +60,7 @@ class ViagemForm(forms.ModelForm):
 class MotoristaForm(forms.ModelForm):
     class Meta:
         model = Motorista
-        fields = ['nome', 'email']
+        fields = ['nome', 'email', 'telefone']
         widgets = {
             'nome': forms.TextInput(attrs={
                 'placeholder': 'Nome do Motorista',
@@ -69,6 +69,11 @@ class MotoristaForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={
                 'placeholder': 'Email do Motorista',
                 'class': 'form-control'
+            }),
+            'telefone': forms.TextInput(attrs={
+                'placeholder': 'Telefone do Motorista',
+                'class': 'form-control',
+                "inputmode": "tel",
             })
         }
 

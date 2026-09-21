@@ -1,0 +1,45 @@
+{% extends "viagens/base_generic.html" %}
+
+{% block title %}Editar motorista | Gestão de Viagens{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-eyebrow">Motoristas</p>
+        <h1>Editar motorista</h1>
+        <p>Atualize os dados de {{ motorista.nome }}.</p>
+    </div>
+
+    <a class="btn btn-outline" href="{% url 'listar_motoristas' %}">
+        ← Voltar
+    </a>
+</section>
+
+<section class="form-card">
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+
+                {% if field.errors %}
+                    <div class="form-error">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <a class="btn btn-outline" href="{% url 'listar_motoristas' %}">
+                Cancelar
+            </a>
+            <button class="btn btn-primary" type="submit">
+                Salvar alterações
+            </button>
+        </div>
+    </form>
+</section>
+{% endblock %}
