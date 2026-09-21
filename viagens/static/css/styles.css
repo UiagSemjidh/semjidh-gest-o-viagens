@@ -2012,3 +2012,58 @@ form textarea:focus {
         flex: 1;
     }
 }
+
+.trip-card-info-grid,
+.trip-card-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.15rem 1.5rem;
+    margin-top: 1.25rem;
+}
+
+.trip-card-info,
+.trip-card-meta {
+    min-width: 0;
+}
+
+.trip-card-info__label,
+.trip-card-meta__label {
+    display: block;
+    margin-bottom: 0.38rem;
+    color: #627489;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.trip-card-info__value,
+.trip-card-meta__value {
+    display: block;
+    overflow: hidden;
+    color: #1b2f49;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trip-card-info__value--empty,
+.trip-card-meta__value--empty {
+    color: #8a98a8;
+    font-weight: 400;
+    font-style: italic;
+}
+
+@media (max-width: 720px) {
+    .trip-card-info-grid,
+    .trip-card-meta-grid {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+    }
+
+    .trip-card-info__value,
+    .trip-card-meta__value {
+        white-space: normal;
+    }
+}

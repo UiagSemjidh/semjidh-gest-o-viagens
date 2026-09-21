@@ -4,10 +4,96 @@ from .models import Viagem, Motorista, Carro
 from .forms import ViagemForm, MotoristaForm, CarroForm
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from django.conf import settings
 from django.http import HttpResponse
 import csv
 from django.core.paginator import Paginator
+import logging
+import requests
+from django.conf import settings
+from django.db import transaction
+from django.utils import timezone
+
+logger = logging.getLogger(__name__)
+
+def enviar_webhook_carro_designado(viagem):
+    webhook_url = getattr(settings, "N8N_WEBHOOK_URL", "")
+
+    if not webhook_url:
+        logger.info(
+            "Webhook n8n não configurado; viagem=%s.",
+            viagem.id,
+        )
+        return
+
+    motorista = viagem.motorista
+    carro = viagem.carro
+
+    if not carro:
+        logger.warning(
+            "Webhook não enviado: viagem=%s não possui carro.",
+            viagem.id,
+        )
+        return
+
+    payload = {
+        "evento": "carro_designado",
+        "enviado_em": timezone.localtime().isoformat(),
+        "viagem": {
+            "id": viagem.id,
+            "destino": viagem.destino or "",
+            "data_ida": (
+                viagem.data_ida.strftime("%d/%m/%Y")
+                if viagem.data_ida
+                else ""
+            ),
+            "data_volta": (
+                viagem.data_volta.strftime("%d/%m/%Y")
+                if viagem.data_volta
+                else ""
+            ),
+            "solicitante": str(viagem.solicitante or ""),
+            "status": viagem.status or "",
+        },
+        "motorista": {
+            "id": motorista.id,
+            "nome": motorista.nome,
+            "email": motorista.email or "",
+            "telefone": motorista.telefone or "",
+        } if motorista else None,
+        "carro": {
+            "id": carro.id,
+            "placa": carro.placa or "",
+            "descricao": str(carro),
+        },
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+    }
+
+    webhook_secret = getattr(settings, "N8N_WEBHOOK_SECRET", "")
+    if webhook_secret:
+        headers["X-Webhook-Secret"] = webhook_secret
+
+    try:
+        response = requests.post(
+            webhook_url,
+            json=payload,
+            headers=headers,
+            timeout=(5, 10),
+        )
+        response.raise_for_status()
+
+        logger.info(
+            "Webhook n8n enviado: viagem=%s status_http=%s.",
+            viagem.id,
+            response.status_code,
+        )
+    except requests.RequestException:
+        logger.exception(
+            "Falha no webhook n8n: viagem=%s.",
+            viagem.id,
+        )
 
 @login_required
 def listar_viagens(request):
@@ -197,6 +283,7 @@ def designar_carro(request, viagem_id):
         viagem.carro = carro
         viagem.status = 'Atribuída'
         viagem.save()
+        transaction.on_commit(lambda: enviar_webhook_carro_designado(viagem))   
         messages.success(request, 'Carro designado com sucesso!')
         return redirect('listar_viagens')
     return render(request, 'viagens/designar_carro.html', {'viagem': viagem, 'carros': carros})
