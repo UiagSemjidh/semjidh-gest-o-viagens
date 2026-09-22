@@ -216,12 +216,3 @@ else:
     EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
     EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
     
-N8N_WEBHOOK_URL = env(
-    "N8N_WEBHOOK_URL",
-    default="",
-)
-
-N8N_WEBHOOK_SECRET = env(
-    "N8N_WEBHOOK_SECRET",
-    default="",
-)
