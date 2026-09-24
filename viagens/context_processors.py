@@ -1,3 +1,7 @@
+from datetime import timedelta
+
+from django.utils import timezone
+
 from .models import Viagem
 
 
@@ -5,8 +9,11 @@ def notificacoes_solicitacoes(request):
     total_solicitacoes_pendentes = 0
 
     if request.user.is_authenticated and request.user.is_superuser:
+        limite = timezone.now() - timedelta(days=30)
+
         total_solicitacoes_pendentes = Viagem.objects.filter(
-            status="Pendente"
+            status="Pendente",
+            criada_em_temp__gte=limite,
         ).count()
 
     return {

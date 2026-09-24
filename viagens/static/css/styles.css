@@ -2071,7 +2071,6 @@ form textarea:focus {
 /* =========================================================
    Cabeçalho: ações e notificações administrativas
    ========================================================= */
-
 .app-header-actions {
     display: flex;
     align-items: center;
@@ -2086,32 +2085,36 @@ form textarea:focus {
     height: 40px;
     flex: 0 0 auto;
     place-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.32);
+    border: 1px solid #c9d8e6;
     border-radius: 11px;
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
+    color: #15558a;
+    background: #eef6fc;
     text-decoration: none;
     transition:
+        color 160ms ease,
         background 160ms ease,
         border-color 160ms ease,
-        transform 160ms ease;
+        transform 160ms ease,
+        box-shadow 160ms ease;
 }
 
 .notification-bell:hover {
-    border-color: rgba(255, 255, 255, 0.6);
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.2);
+    border-color: #8bb5d3;
+    color: #0d426f;
+    background: #e2f0fa;
     transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(21, 85, 138, 0.14);
 }
 
 .notification-bell:focus-visible {
-    outline: 3px solid rgba(255, 255, 255, 0.65);
+    outline: 3px solid rgba(21, 85, 138, 0.25);
     outline-offset: 3px;
 }
 
 .notification-bell svg {
-    width: 20px;
-    height: 20px;
+    width: 21px;
+    height: 21px;
+    stroke: currentColor;
 }
 
 .notification-bell__badge {
@@ -2119,16 +2122,16 @@ form textarea:focus {
     top: -7px;
     right: -7px;
     display: grid;
-    min-width: 20px;
-    height: 20px;
+    min-width: 21px;
+    height: 21px;
     place-items: center;
     padding: 0 4px;
-    border: 2px solid #0f4e85;
+    border: 2px solid #ffffff;
     border-radius: 999px;
     color: #ffffff;
     background: #d92d20;
     box-sizing: border-box;
-    font-size: 0.67rem;
+    font-size: 0.66rem;
     font-weight: 800;
     line-height: 1;
 }
