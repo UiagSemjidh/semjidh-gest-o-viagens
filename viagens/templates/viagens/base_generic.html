@@ -32,15 +32,15 @@
                 <div class="app-header-actions">
                     {% if user.is_authenticated and user.is_superuser %}
                     <a class="notification-bell" href="{% url 'listar_viagens' %}"
-                        aria-label="{{ total_solicitacoes_pendentes }} solicitações pendentes"
-                        title="{{ total_solicitacoes_pendentes }} solicitação(ões) pendente(s)">
+                        aria-label="{{ total_solicitacoes_pendentes|default:0 }} solicitações pendentes"
+                        title="{{ total_solicitacoes_pendentes|default:0 }} solicitação(ões) pendente(s)">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
                             stroke-linejoin="round" aria-hidden="true">
                             <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
                             <path d="M10 21h4"></path>
                         </svg>
                 
-                        {% if total_solicitacoes_pendentes > 0 %}
+                        {% if total_solicitacoes_pendentes|default:0 > 0 %}
                         <span class="notification-bell__badge">
                             {% if total_solicitacoes_pendentes > 99 %}
                             99+
@@ -49,9 +49,13 @@
                             {% endif %}
                         </span>
                         {% endif %}
+                
+                        <span class="visually-hidden">
+                            Notificações de solicitações pendentes
+                        </span>
                     </a>
                     {% endif %}
-
+                
                     <button class="navbar-toggler app-menu-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false"
                         aria-label="Abrir menu de navegação">
