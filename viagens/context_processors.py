@@ -13,7 +13,7 @@ def notificacoes_solicitacoes(request):
 
         total_solicitacoes_pendentes = Viagem.objects.filter(
             status="Pendente",
-            criada_em_temp__gte=limite,
+            criado_em__gte=limite,
         ).count()
 
     return {
