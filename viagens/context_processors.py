@@ -14,7 +14,7 @@ def notificacoes_solicitacoes(request):
         limite = timezone.now() - timedelta(days=30)
 
         total = Viagem.objects.filter(
-            criado_em__gte=limite,
+            criada_em__gte=limite,
         ).count()
 
     return {
