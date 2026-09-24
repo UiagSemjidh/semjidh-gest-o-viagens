@@ -70,76 +70,81 @@
                     </header>
 
                     <div class="travel-card-body">
-
+                    
                         <section class="travel-details">
-                            <div class="travel-detail">
-                                <span class="travel-detail-label">Servidores participantes</span>
-
-                                <ul class="travel-server-list">
-                                    {% for servidor in viagem.servidores_lista %}
-                                        <li>{{ servidor }}</li>
-                                    {% empty %}
-                                        <li>Não informado</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-
-                            <div class="trip-card-info-grid">
-                                <div class="trip-card-info">
-                                    <span class="trip-card-info__label">Motorista designado</span>
-
-                                    {% if viagem.motorista %}
-                                        <span class="trip-card-info__value">
-                                            {{ viagem.motorista.nome }}
-                                        </span>
-                                    {% else %}
-                                        <span class="trip-card-info__value trip-card-info__value--empty">
-                                            Não designado
-                                        </span>
-                                    {% endif %}
-                                </div>
-
-                                <div class="trip-card-info">
-                                    <span class="trip-card-info__label">Veículo designado</span>
-
-                                    {% if viagem.carro %}
-                                        <span class="trip-card-info__value">
-                                            {{ viagem.carro }}
-                                        </span>
-                                    {% else %}
-                                        <span class="trip-card-info__value trip-card-info__value--empty">
-                                            Não designado
-                                        </span>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="travel-details-grid">
+                            <div class="travel-details-grid travel-details-grid--aligned">
                                 <div class="travel-detail">
-                                    <span class="travel-detail-label">Solicitada em</span>
-                                    <span class="travel-detail-value">
-                                        {{ viagem.criada_em|date:"d/m/Y H:i" }}
-                                    </span>
+                                    <span class="travel-detail-label">Servidores participantes</span>
+                    
+                                    <ul class="travel-server-list">
+                                        {% for servidor in viagem.servidores_lista %}
+                                        <li>{{ servidor }}</li>
+                                        {% empty %}
+                                        <li>Não informado</li>
+                                        {% endfor %}
+                                    </ul>
                                 </div>
-
+                    
                                 <div class="travel-detail">
                                     <span class="travel-detail-label">Processo</span>
                                     <span class="travel-detail-value">
                                         {{ viagem.processo|default:"Não informado" }}
                                     </span>
                                 </div>
-
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Motorista designado</span>
+                    
+                                    {% if viagem.motorista %}
+                                    <span class="travel-detail-value">
+                                        {{ viagem.motorista.nome }}
+                                    </span>
+                                    {% else %}
+                                    <span class="travel-detail-value travel-detail-value--empty">
+                                        Não designado
+                                    </span>
+                                    {% endif %}
+                                </div>
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Veículo designado</span>
+                    
+                                    {% if viagem.carro %}
+                                    <span class="travel-detail-value">
+                                        {{ viagem.carro }}
+                                    </span>
+                                    {% else %}
+                                    <span class="travel-detail-value travel-detail-value--empty">
+                                        Não designado
+                                    </span>
+                                    {% endif %}
+                                </div>
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Solicitada em</span>
+                                    <span class="travel-detail-value">
+                                        {{ viagem.criada_em|date:"d/m/Y H:i" }}
+                                    </span>
+                                </div>
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Data de retorno</span>
+                                    <span class="travel-detail-value">
+                                        {{ viagem.data_volta|date:"d/m/Y" }}
+                                    </span>
+                                </div>
+                    
                                 <div class="travel-detail">
                                     <span class="travel-detail-label">Local de saída</span>
                                     <span class="travel-detail-value">
                                         {{ viagem.local_partida|default:"SEMJIDH" }}
                                     </span>
                                 </div>
-
+                    
                                 <div class="travel-detail">
-                                    <span class="travel-detail-label">Data de retorno</span>
+                                    <span class="travel-detail-label">Destino</span>
                                     <span class="travel-detail-value">
-                                        {{ viagem.data_volta|date:"d/m/Y" }}
+                                        {{ viagem.destino|default:"Não informado" }}
                                     </span>
                                 </div>
                             </div>

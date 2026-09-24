@@ -8,23 +8,63 @@ from django.http import HttpResponse
 import csv
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.db.models import Q
+from django.utils import timezone
 
 
 
 @login_required
 def listar_viagens(request):
-    viagens = Viagem.objects.select_related('motorista').order_by('-data_ida')
+    viagens = Viagem.objects.select_related(
+        "motorista",
+        "carro",
+    ).prefetch_related(
+        "servidores",
+    ).order_by("-data_ida")
 
-    # Paginação: 20 viagens por página
+    busca = request.GET.get("busca", "").strip()
+    status = request.GET.get("status", "")
+    retorno = request.GET.get("retorno", "")
+
+    if busca:
+        viagens = viagens.filter(
+            Q(destino__icontains=busca)
+            | Q(processo__icontains=busca)
+            | Q(setor__icontains=busca)
+            | Q(solicitante__icontains=busca)
+        )
+
+    if status:
+        viagens = viagens.filter(status=status)
+
+    hoje = timezone.localdate()
+
+    if retorno == "vigentes":
+        viagens = viagens.filter(data_volta__gte=hoje)
+    elif retorno == "hoje":
+        viagens = viagens.filter(data_volta=hoje)
+    elif retorno == "futuras":
+        viagens = viagens.filter(data_volta__gt=hoje)
+    elif retorno == "atrasadas":
+        viagens = viagens.filter(data_volta__lt=hoje)
+
     paginator = Paginator(viagens, 20)
-    page_number = request.GET.get('page') or 1
+    page_number = request.GET.get("page") or 1
     page_obj = paginator.get_page(page_number)
 
+    filtros = request.GET.copy()
+    filtros.pop("page", None)
+
     context = {
-        'page_obj': page_obj,
-        'paginator': paginator,  # necessário para o dropdown
+        "page_obj": page_obj,
+        "paginator": paginator,
+        "busca": busca,
+        "status_selecionado": status,
+        "retorno_selecionado": retorno,
+        "filtros_query": filtros.urlencode(),
     }
-    return render(request, 'viagens/listar_viagens.html', context)
+
+    return render(request, "viagens/listar_viagens.html", context)
 
 def editar_motorista(request, motorista_id):
     motorista = get_object_or_404(Motorista, id=motorista_id)
