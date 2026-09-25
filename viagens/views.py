@@ -96,7 +96,7 @@ def listar_viagens(request):
         "busca": busca,
         "status_selecionado": status,
         "setor_selecionado": setor,
-        "motorista_selecionado": motorista_id,
+        "motorista_selecionado": int(motorista_id) if motorista_id.isdigit() else None,
         "cadastro_de": cadastro_de,
         "cadastro_ate": cadastro_ate,
         "saida_de": saida_de,
