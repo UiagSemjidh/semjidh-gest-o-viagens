@@ -10,6 +10,8 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.db.models import Q
 from django.utils import timezone
+from datetime import datetime, time
+
 
 
 
@@ -23,7 +25,12 @@ def listar_viagens(request):
     busca = request.GET.get("busca", "").strip()
     status = request.GET.get("status", "")
     setor = request.GET.get("setor", "")
-    retorno = request.GET.get("retorno", "")
+    motorista_id = request.GET.get("motorista", "")
+
+    cadastro_de = request.GET.get("cadastro_de", "")
+    cadastro_ate = request.GET.get("cadastro_ate", "")
+    saida_de = request.GET.get("saida_de", "")
+    saida_ate = request.GET.get("saida_ate", "")
 
     if busca:
         viagens = viagens.filter(
@@ -42,20 +49,43 @@ def listar_viagens(request):
     if setor:
         viagens = viagens.filter(setor=setor)
 
-    hoje = timezone.localdate()
+    if motorista_id:
+        viagens = viagens.filter(motorista_id=motorista_id)
 
-    if retorno == "vigentes":
-        viagens = viagens.filter(data_volta__gte=hoje)
-    elif retorno == "hoje":
-        viagens = viagens.filter(data_volta=hoje)
-    elif retorno == "futuras":
-        viagens = viagens.filter(data_volta__gt=hoje)
-    elif retorno == "atrasadas":
-        viagens = viagens.filter(data_volta__lt=hoje)
+    if cadastro_de:
+        try:
+            data_inicial = datetime.strptime(cadastro_de, "%Y-%m-%d").date()
+            inicio = timezone.make_aware(
+                datetime.combine(data_inicial, time.min)
+            )
+            viagens = viagens.filter(criada_em__gte=inicio)
+        except ValueError:
+            pass
+
+    if cadastro_ate:
+        try:
+            data_final = datetime.strptime(cadastro_ate, "%Y-%m-%d").date()
+            fim = timezone.make_aware(
+                datetime.combine(data_final, time.max)
+            )
+            viagens = viagens.filter(criada_em__lte=fim)
+        except ValueError:
+            pass
+
+    if saida_de:
+        try:
+            viagens = viagens.filter(data_ida__gte=saida_de)
+        except ValueError:
+            pass
+
+    if saida_ate:
+        try:
+            viagens = viagens.filter(data_ida__lte=saida_ate)
+        except ValueError:
+            pass
 
     paginator = Paginator(viagens, 20)
-    page_number = request.GET.get("page") or 1
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator.get_page(request.GET.get("page") or 1)
 
     filtros = request.GET.copy()
     filtros.pop("page", None)
@@ -66,8 +96,13 @@ def listar_viagens(request):
         "busca": busca,
         "status_selecionado": status,
         "setor_selecionado": setor,
-        "retorno_selecionado": retorno,
+        "motorista_selecionado": motorista_id,
+        "cadastro_de": cadastro_de,
+        "cadastro_ate": cadastro_ate,
+        "saida_de": saida_de,
+        "saida_ate": saida_ate,
         "setores": Viagem.SETOR_CHOICES,
+        "motoristas": Motorista.objects.order_by("nome"),
         "filtros_query": filtros.urlencode(),
     }
 
