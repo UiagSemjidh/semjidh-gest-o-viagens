@@ -64,13 +64,12 @@
     
         <div class="travel-filter-form__field">
             <label for="id_motorista">Motorista</label>
-    
+        
             <select id="id_motorista" name="motorista" class="form-select">
                 <option value="">Todos os motoristas</option>
-    
+        
                 {% for motorista in motoristas %}
-                <option value="{{ motorista.id }}" {% if motorista_selecionado == motorista.id|stringformat:"s" %}selected{%
-                    endif %}>
+                <option value="{{ motorista.id }}" {% if motorista_selecionado == motorista.id %}selected{% endif %}>
                     {{ motorista.nome }}
                 </option>
                 {% endfor %}
