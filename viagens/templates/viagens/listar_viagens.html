@@ -20,7 +20,82 @@
             Nova solicitação
         </a>
     </div>
-
+    <form method="get" class="travel-filter-form">
+        <div class="travel-filter-form__field travel-filter-form__field--search">
+            <label for="id_busca">Buscar</label>
+    
+            <input id="id_busca" type="search" name="busca" class="form-control" value="{{ busca }}"
+                placeholder="Destino, setor, solicitante, processo ou motorista">
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_status">Status</label>
+    
+            <select id="id_status" name="status" class="form-select">
+                <option value="">Todos os status</option>
+    
+                <option value="Pendente" {% if status_selecionado=="Pendente" %}selected{% endif %}>
+                    Pendente
+                </option>
+    
+                <option value="Atribuída" {% if status_selecionado=="Atribuída" %}selected{% endif %}>
+                    Atribuída
+                </option>
+    
+                <option value="Concluída" {% if status_selecionado=="Concluída" %}selected{% endif %}>
+                    Concluída
+                </option>
+            </select>
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_setor">Setor</label>
+    
+            <select id="id_setor" name="setor" class="form-select">
+                <option value="">Todos os setores</option>
+    
+                {% for valor, nome in setores %}
+                <option value="{{ valor }}" {% if setor_selecionado==valor %}selected{% endif %}>
+                    {{ nome }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_retorno">Retorno</label>
+    
+            <select id="id_retorno" name="retorno" class="form-select">
+                <option value="">Todas as viagens</option>
+    
+                <option value="vigentes" {% if retorno_selecionado=="vigentes" %}selected{% endif %}>
+                    Retorno hoje ou futuro
+                </option>
+    
+                <option value="hoje" {% if retorno_selecionado=="hoje" %}selected{% endif %}>
+                    Retorno hoje
+                </option>
+    
+                <option value="futuras" {% if retorno_selecionado=="futuras" %}selected{% endif %}>
+                    Retorno futuro
+                </option>
+    
+                <option value="atrasadas" {% if retorno_selecionado=="atrasadas" %}selected{% endif %}>
+                    Retorno vencido
+                </option>
+            </select>
+        </div>
+    
+        <div class="travel-filter-form__actions">
+            <button type="submit" class="btn btn-primary">
+                Filtrar
+            </button>
+    
+            <a href="{% url 'listar_viagens' %}" class="btn btn-outline-secondary">
+                Limpar
+            </a>
+        </div>
+    </form>
     {% if page_obj %}
         <div class="travel-list-summary">
             <span class="travel-list-summary__icon" aria-hidden="true">✓</span>
