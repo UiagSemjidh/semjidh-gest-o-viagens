@@ -2171,18 +2171,20 @@ form textarea:focus {
     display: grid;
     grid-template-columns:
         minmax(220px, 2fr)
-        minmax(145px, 1fr)
-        minmax(150px, 1fr)
-        minmax(200px, 1.2fr)
+        minmax(170px, 1fr)
+        minmax(170px, 1fr)
+        minmax(220px, 1.2fr)
         auto;
     gap: 1rem;
     align-items: end;
+    width: 100%;
     margin: 1.5rem 0 1.25rem;
     padding: 1.2rem;
     border: 1px solid #d9e4ee;
     border-radius: 14px;
     background: #ffffff;
     box-shadow: 0 7px 20px rgba(15, 63, 101, 0.06);
+    box-sizing: border-box;
 }
 
 .travel-filter-form__field {
@@ -2199,27 +2201,20 @@ form textarea:focus {
     text-transform: uppercase;
 }
 
+.travel-filter-form__field .form-control,
+.travel-filter-form__field .form-select {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
 .travel-filter-form__actions {
     display: flex;
     gap: 0.6rem;
+    align-items: center;
+    white-space: nowrap;
 }
 
 .travel-filter-form__actions .btn {
     white-space: nowrap;
-}
-
-@media (max-width: 1199.98px) {
-    .travel-filter-form {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 575.98px) {
-    .travel-filter-form {
-        grid-template-columns: 1fr;
-    }
-
-    .travel-filter-form__actions .btn {
-        flex: 1;
-    }
 }
