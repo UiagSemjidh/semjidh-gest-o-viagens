@@ -108,6 +108,10 @@
             <a href="{% url 'listar_viagens' %}" class="btn btn-outline-secondary">
                 Limpar
             </a>
+            
+            <a href="{% url 'exportar_viagens' %}?{{ filtros_query }}" class="btn btn-outline-primary">
+                Exportar CSV
+            </a>
         </div>
     </form>
 
