@@ -223,23 +223,86 @@ def apagar_motorista(request, id):
 
 @login_required
 def exportar_viagens(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="viagens_semjidh.csv"'
+    viagens = Viagem.objects.select_related(
+        "motorista",
+        "carro",
+    ).order_by("-data_ida")
+
+    busca = request.GET.get("busca", "").strip()
+    status = request.GET.get("status", "")
+    setor = request.GET.get("setor", "")
+    motorista_id = request.GET.get("motorista", "")
+    cadastro_de = request.GET.get("cadastro_de", "")
+    cadastro_ate = request.GET.get("cadastro_ate", "")
+    saida_de = request.GET.get("saida_de", "")
+    saida_ate = request.GET.get("saida_ate", "")
+
+    if busca:
+        viagens = viagens.filter(
+            Q(destino__icontains=busca)
+            | Q(processo__icontains=busca)
+            | Q(setor__icontains=busca)
+            | Q(solicitante__icontains=busca)
+            | Q(servidores__icontains=busca)
+            | Q(veiculo__icontains=busca)
+            | Q(motorista__nome__icontains=busca)
+        )
+
+    if status:
+        viagens = viagens.filter(status=status)
+
+    if setor:
+        viagens = viagens.filter(setor=setor)
+
+    if motorista_id:
+        viagens = viagens.filter(motorista_id=motorista_id)
+
+    if cadastro_de:
+        try:
+            data_inicial = datetime.strptime(cadastro_de, "%Y-%m-%d").date()
+            inicio = timezone.make_aware(
+                datetime.combine(data_inicial, time.min)
+            )
+            viagens = viagens.filter(criada_em__gte=inicio)
+        except ValueError:
+            pass
+
+    if cadastro_ate:
+        try:
+            data_final = datetime.strptime(cadastro_ate, "%Y-%m-%d").date()
+            fim = timezone.make_aware(
+                datetime.combine(data_final, time.max)
+            )
+            viagens = viagens.filter(criada_em__lte=fim)
+        except ValueError:
+            pass
+
+    if saida_de:
+        try:
+            viagens = viagens.filter(data_ida__gte=saida_de)
+        except ValueError:
+            pass
+
+    if saida_ate:
+        try:
+            viagens = viagens.filter(data_ida__lte=saida_ate)
+        except ValueError:
+            pass
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="viagens_semjidh.csv"'
 
     writer = csv.writer(response)
-    
-    writer.writerow(['ID', 'Destino', 'Data de Ida', 'Data de Volta', 'Solicitante', 'Motorista'])
-
-    viagens = Viagem.objects.all()
+    writer.writerow(["ID", "Destino", "Data de Ida", "Data de Volta", "Solicitante", "Motorista"])
 
     for viagem in viagens:
         writer.writerow([
             viagem.id,
             viagem.destino,
-            viagem.data_ida.strftime('%d/%m/%Y'),  # Formatação da data
-            viagem.data_volta.strftime('%d/%m/%Y'),
+            viagem.data_ida.strftime("%d/%m/%Y"),
+            viagem.data_volta.strftime("%d/%m/%Y"),
             viagem.solicitante,
-            viagem.motorista.nome if viagem.motorista else 'Sem motorista' 
+            viagem.motorista.nome if viagem.motorista else "Sem motorista",
         ])
 
     return response
