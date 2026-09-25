@@ -77,13 +77,13 @@
         </div>
     
         <div class="travel-filter-form__field">
-            <label for="id_cadastro_de">Cadastro de</label>
+            <label for="id_cadastro_de">Solicitada de</label>
     
             <input id="id_cadastro_de" type="date" name="cadastro_de" class="form-control" value="{{ cadastro_de }}">
         </div>
     
         <div class="travel-filter-form__field">
-            <label for="id_cadastro_ate">Cadastro até</label>
+            <label for="id_cadastro_ate">Solicitada até</label>
     
             <input id="id_cadastro_ate" type="date" name="cadastro_ate" class="form-control" value="{{ cadastro_ate }}">
         </div>
@@ -122,7 +122,7 @@
             <span>
                 Página {{ page_obj.number }} de {{ paginator.num_pages }}
                 {% if paginator.count %}
-                    — {{ paginator.count }} viagem{{ paginator.count|pluralize:"ens" }} cadastrada{{ paginator.count|pluralize:"s" }}.
+                    — {{ paginator.count }} viage{{ paginator.count|pluralize:"m,ns" }} cadastrada{{ paginator.count|pluralize:"s" }}.
                 {% endif %}
             </span>
         </div>
