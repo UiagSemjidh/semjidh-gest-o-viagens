@@ -25,7 +25,7 @@
             <label for="id_busca">Buscar</label>
     
             <input id="id_busca" type="search" name="busca" class="form-control" value="{{ busca }}"
-                placeholder="Destino, setor, solicitante, processo ou motorista">
+                placeholder="Destino, setor, solicitante ou processo">
         </div>
     
         <div class="travel-filter-form__field">
@@ -63,27 +63,42 @@
         </div>
     
         <div class="travel-filter-form__field">
-            <label for="id_retorno">Retorno</label>
+            <label for="id_motorista">Motorista</label>
     
-            <select id="id_retorno" name="retorno" class="form-select">
-                <option value="">Todas as viagens</option>
+            <select id="id_motorista" name="motorista" class="form-select">
+                <option value="">Todos os motoristas</option>
     
-                <option value="vigentes" {% if retorno_selecionado == "vigentes" %}selected{% endif %}>
-                    Retorno hoje ou futuro
+                {% for motorista in motoristas %}
+                <option value="{{ motorista.id }}" {% if motorista_selecionado == motorista.id|stringformat:"s" %}selected{%
+                    endif %}>
+                    {{ motorista.nome }}
                 </option>
-    
-                <option value="hoje" {% if retorno_selecionado == "hoje" %}selected{% endif %}>
-                    Retorno hoje
-                </option>
-    
-                <option value="futuras" {% if retorno_selecionado == "futuras" %}selected{% endif %}>
-                    Retorno futuro
-                </option>
-    
-                <option value="atrasadas" {% if retorno_selecionado == "atrasadas" %}selected{% endif %}>
-                    Retorno vencido
-                </option>
+                {% endfor %}
             </select>
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_cadastro_de">Cadastro de</label>
+    
+            <input id="id_cadastro_de" type="date" name="cadastro_de" class="form-control" value="{{ cadastro_de }}">
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_cadastro_ate">Cadastro até</label>
+    
+            <input id="id_cadastro_ate" type="date" name="cadastro_ate" class="form-control" value="{{ cadastro_ate }}">
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_saida_de">Saída de</label>
+    
+            <input id="id_saida_de" type="date" name="saida_de" class="form-control" value="{{ saida_de }}">
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_saida_ate">Saída até</label>
+    
+            <input id="id_saida_ate" type="date" name="saida_ate" class="form-control" value="{{ saida_ate }}">
         </div>
     
         <div class="travel-filter-form__actions">
