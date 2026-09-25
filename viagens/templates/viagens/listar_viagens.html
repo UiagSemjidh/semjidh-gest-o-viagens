@@ -34,15 +34,15 @@
             <select id="id_status" name="status" class="form-select">
                 <option value="">Todos os status</option>
     
-                <option value="Pendente" {% if status_selecionado=="Pendente" %}selected{% endif %}>
+                <option value="Pendente" {% if status_selecionado == "Pendente" %}selected{% endif %}>
                     Pendente
                 </option>
     
-                <option value="Atribuída" {% if status_selecionado=="Atribuída" %}selected{% endif %}>
+                <option value="Atribuída" {% if status_selecionado == "Atribuída" %}selected{% endif %}>
                     Atribuída
                 </option>
     
-                <option value="Concluída" {% if status_selecionado=="Concluída" %}selected{% endif %}>
+                <option value="Concluída" {% if status_selecionado == "Concluída" %}selected{% endif %}>
                     Concluída
                 </option>
             </select>
@@ -55,7 +55,7 @@
                 <option value="">Todos os setores</option>
     
                 {% for valor, nome in setores %}
-                <option value="{{ valor }}" {% if setor_selecionado==valor %}selected{% endif %}>
+                <option value="{{ valor }}" {% if setor_selecionado == valor %}selected{% endif %}>
                     {{ nome }}
                 </option>
                 {% endfor %}
@@ -68,19 +68,19 @@
             <select id="id_retorno" name="retorno" class="form-select">
                 <option value="">Todas as viagens</option>
     
-                <option value="vigentes" {% if retorno_selecionado=="vigentes" %}selected{% endif %}>
+                <option value="vigentes" {% if retorno_selecionado == "vigentes" %}selected{% endif %}>
                     Retorno hoje ou futuro
                 </option>
     
-                <option value="hoje" {% if retorno_selecionado=="hoje" %}selected{% endif %}>
+                <option value="hoje" {% if retorno_selecionado == "hoje" %}selected{% endif %}>
                     Retorno hoje
                 </option>
     
-                <option value="futuras" {% if retorno_selecionado=="futuras" %}selected{% endif %}>
+                <option value="futuras" {% if retorno_selecionado == "futuras" %}selected{% endif %}>
                     Retorno futuro
                 </option>
     
-                <option value="atrasadas" {% if retorno_selecionado=="atrasadas" %}selected{% endif %}>
+                <option value="atrasadas" {% if retorno_selecionado == "atrasadas" %}selected{% endif %}>
                     Retorno vencido
                 </option>
             </select>
