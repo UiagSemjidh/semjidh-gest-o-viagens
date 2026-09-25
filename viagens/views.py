@@ -18,12 +18,11 @@ def listar_viagens(request):
     viagens = Viagem.objects.select_related(
         "motorista",
         "carro",
-    ).prefetch_related(
-        "servidores",
     ).order_by("-data_ida")
 
     busca = request.GET.get("busca", "").strip()
     status = request.GET.get("status", "")
+    setor = request.GET.get("setor", "")
     retorno = request.GET.get("retorno", "")
 
     if busca:
@@ -32,10 +31,16 @@ def listar_viagens(request):
             | Q(processo__icontains=busca)
             | Q(setor__icontains=busca)
             | Q(solicitante__icontains=busca)
+            | Q(servidores__icontains=busca)
+            | Q(veiculo__icontains=busca)
+            | Q(motorista__nome__icontains=busca)
         )
 
     if status:
         viagens = viagens.filter(status=status)
+
+    if setor:
+        viagens = viagens.filter(setor=setor)
 
     hoje = timezone.localdate()
 
@@ -60,7 +65,9 @@ def listar_viagens(request):
         "paginator": paginator,
         "busca": busca,
         "status_selecionado": status,
+        "setor_selecionado": setor,
         "retorno_selecionado": retorno,
+        "setores": Viagem.SETOR_CHOICES,
         "filtros_query": filtros.urlencode(),
     }
 
