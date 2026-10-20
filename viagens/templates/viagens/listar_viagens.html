@@ -215,9 +215,14 @@
                                 </div>
                     
                                 <div class="travel-detail">
-                                    <span class="travel-detail-label">Solicitada em</span>
+                                    <span class="travel-detail-label">Solicitada por</span>
+
                                     <span class="travel-detail-value">
-                                        {{ viagem.criada_em|date:"d/m/Y H:i" }}
+                                        {{ viagem.solicitante|default:"Não informado" }}
+                                    </span>
+
+                                    <span class="travel-detail-label">
+                                        Em {{ viagem.criada_em|date:"d/m/Y H:i" }}
                                     </span>
                                 </div>
                     
@@ -259,9 +264,15 @@
 
                             <div class="travel-time-row">
                                 <span>Retorno real</span>
-                                <strong>{{ viagem.horario_volta_real|default:"Não informado" }}</strong>
-                            </div>
 
+                                {% if viagem.horario_volta_real %}
+                                    <strong>
+                                        {{ viagem.horario_volta_real|date:"d/m/Y H:i" }}
+                                    </strong>
+                                {% else %}
+                                    <strong>Não informado</strong>
+                                {% endif %}
+                            </div>
                             {% if viagem.motorista %}
                                 <form
                                     method="post"
@@ -271,20 +282,22 @@
                                     {% csrf_token %}
 
                                     <label for="horario_volta_real_{{ viagem.id }}">
-                                        Registrar horário real da volta
+                                        Registrar data e horário reais da volta
                                     </label>
 
                                     <input
                                         id="horario_volta_real_{{ viagem.id }}"
-                                        type="time"
+                                        type="datetime-local"
                                         name="horario_volta_real"
                                         class="form-control"
-                                        value="{{ viagem.horario_volta_real|time:'H:i' }}"
+                                        value="{{ viagem.horario_volta_real|date:'Y-m-d\TH:i' }}"
+                                        step="60"
+                                        required
                                     >
 
                                     <button type="submit" class="btn btn-success btn-sm">
-                                        Salvar horário
-                                    </button>
+                                        Salvar retorno
+                                    </button> 
                                 </form>
                             {% endif %}
 

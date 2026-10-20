@@ -75,7 +75,7 @@ class Viagem(models.Model):
     )
     carro = models.ForeignKey(Carro, null=True, blank=True, max_length=200, on_delete=models.SET_NULL)
 
-    horario_volta_real = models.TimeField(null=True, blank=True, verbose_name="Volta")
+    horario_volta_real = models.DateTimeField(null=True, blank=True, verbose_name="Volta")
 
     @property
     def servidores_lista(self):

@@ -349,12 +349,24 @@ def designar_carro(request, viagem_id):
     return render(request, 'viagens/designar_carro.html', {'viagem': viagem, 'carros': carros})
 
 def atualizar_volta_real(request, viagem_id):
-    if request.method == 'POST':
+    if request.method == "POST":
         viagem = get_object_or_404(Viagem, id=viagem_id)
-        horario = request.POST.get('horario_volta_real')
+        valor = request.POST.get("horario_volta_real")
 
-        if horario:
-            viagem.horario_volta_real = horario
-            viagem.save()
+        if valor:
+            try:
+                data_hora = forms.DateTimeField(
+                    input_formats=[
+                        "%Y-%m-%dT%H:%M",
+                        "%Y-%m-%dT%H:%M:%S",
+                    ]
+                ).clean(valor)
+            except ValidationError:
+                return HttpResponseBadRequest(
+                    "Informe uma data e um horário válidos."
+                )
 
-    return redirect('listar_viagens')
+            viagem.horario_volta_real = data_hora
+            viagem.save(update_fields=["horario_volta_real"])
+
+    return redirect("listar_viagens")
