@@ -1,0 +1,133 @@
+{% extends "viagens/base_generic.html" %}
+
+{% block title %}Motoristas cadastrados | SEMJIDH{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5 driver-list-page">
+
+    <div class="entity-page-header">
+        <div>
+            <span class="entity-eyebrow">Cadastro operacional</span>
+            <h1>Motoristas cadastrados</h1>
+            <p>
+                Consulte os motoristas disponíveis para designação nas viagens.
+            </p>
+        </div>
+
+        <a href="{% url 'cadastrar_motorista' %}" class="btn btn-primary entity-new-button">
+            <span aria-hidden="true">+</span>
+            Cadastrar motorista
+        </a>
+    </div>
+
+    {% if motoristas %}
+        <div class="entity-list-summary">
+            <span class="entity-list-summary__icon" aria-hidden="true">✓</span>
+
+            <span>
+                {{ motoristas|length }} motorista{{ motoristas|length|pluralize:"s" }}
+                cadastrado{{ motoristas|length|pluralize:"s" }}.
+            </span>
+        </div>
+
+        <section class="entity-list" aria-label="Lista de motoristas">
+    {% for motorista in motoristas %}
+        <article class="entity-card">
+
+            <div class="entity-card-icon entity-card-icon--driver" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"></circle>
+                    <path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6"></path>
+                </svg>
+            </div>
+
+            <div class="entity-card-content">
+                <span class="entity-card-label">Motorista</span>
+
+                <h2 class="entity-card-title">
+                    {{ motorista.nome }}
+                </h2>
+
+                <div class="driver-card-email">
+                    <span class="driver-card-email__label">E-mail</span>
+
+                    {% if motorista.email %}
+                        <a href="mailto:{{ motorista.email }}">
+                            {{ motorista.email }}
+                        </a>
+                    {% else %}
+                        <span class="driver-card-empty">
+                            E-mail não informado
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="driver-card-phone">
+                    <span class="driver-card-phone__label">Telefone</span>
+
+                    {% if motorista.telefone %}
+                        <a href="tel:{{ motorista.telefone }}">
+                            {{ motorista.telefone }}
+                        </a>
+                    {% else %}
+                        <span class="driver-card-empty">
+                            Telefone não informado
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="entity-card-actions">
+                <a
+                    href="{% url 'editar_motorista' motorista.id %}"
+                    class="btn btn-outline btn-sm"
+                >
+                    Editar
+                </a>
+
+                <form
+                    action="{% url 'apagar_motorista' motorista.id %}"
+                    method="post"
+                    class="entity-delete-form"
+                    onsubmit="return confirm('Tem certeza de que deseja apagar o motorista {{ motorista.nome }}?');"
+                >
+                    {% csrf_token %}
+
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        Apagar
+                    </button>
+                </form>
+            </div>
+
+        </article>
+    {% endfor %}
+</section>
+
+    {% else %}
+        <section class="entity-empty-state">
+            <div class="entity-empty-state__icon entity-empty-state__icon--driver" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"></circle>
+                    <path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6"></path>
+                </svg>
+            </div>
+
+            <h2>Nenhum motorista cadastrado</h2>
+
+            <p>
+                Cadastre os motoristas responsáveis pelos deslocamentos
+                oficiais para que possam ser designados às viagens.
+            </p>
+
+            <a href="{% url 'cadastrar_motorista' %}" class="btn btn-primary">
+                Cadastrar primeiro motorista
+            </a>
+        </section>
+    {% endif %}
+
+</div>
+{% endblock %}

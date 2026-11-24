@@ -1,0 +1,465 @@
+{% extends "viagens/base_generic.html" %}
+
+{% block title %}Viagens cadastradas | SEMJIDH{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5 travel-list-page">
+
+    <div class="travel-page-header">
+        <div>
+            <span class="travel-eyebrow">Controle operacional</span>
+            <h1>Viagens cadastradas</h1>
+            <p>
+                Consulte solicitações, acompanhe as designações e registre
+                o horário real de retorno.
+            </p>
+        </div>
+
+        <a href="{% url 'solicitar_viagem' %}" class="btn btn-primary travel-new-button">
+            <span aria-hidden="true">+</span>
+            Nova solicitação
+        </a>
+    </div> 
+    <form method="get" class="travel-filter-form">
+        <div class="travel-filter-form__field travel-filter-form__field--search">
+            <label for="id_busca">Buscar</label>
+    
+            <input id="id_busca" type="search" name="busca" class="form-control" value="{{ busca }}"
+                placeholder="Destino, setor, solicitante ou processo">
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_status">Status</label>
+    
+            <select id="id_status" name="status" class="form-select">
+                <option value="">Todos os status</option>
+    
+                <option value="Pendente" {% if status_selecionado == "Pendente" %}selected{% endif %}>
+                    Pendente
+                </option>
+    
+                <option value="Atribuída" {% if status_selecionado == "Atribuída" %}selected{% endif %}>
+                    Atribuída
+                </option>
+    
+                <option value="Concluída" {% if status_selecionado == "Concluída" %}selected{% endif %}>
+                    Concluída
+                </option>
+            </select>
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_setor">Setor</label>
+    
+            <select id="id_setor" name="setor" class="form-select">
+                <option value="">Todos os setores</option>
+    
+                {% for valor, nome in setores %}
+                <option value="{{ valor }}" {% if setor_selecionado == valor %}selected{% endif %}>
+                    {{ nome }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_motorista">Motorista</label>
+        
+            <select id="id_motorista" name="motorista" class="form-select">
+                <option value="">Todos os motoristas</option>
+        
+                {% for motorista in motoristas %}
+                <option value="{{ motorista.id }}" {% if motorista_selecionado == motorista.id %}selected{% endif %}>
+                    {{ motorista.nome }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="travel-filter-form__field">
+            <label for="id_ordem">Ordenar por data</label>
+
+            <select id="id_ordem" name="ordem" class="form-select">
+                <option value="desc" {% if ordem != "asc" %}selected{% endif %}>Mais recentes primeiro (Decrescente)</option>
+                <option value="asc" {% if ordem == "asc" %}selected{% endif %}>Mais antigas primeiro (Crescente)</option>
+            </select>
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_cadastro_de">Solicitada de</label>
+    
+            <input id="id_cadastro_de" type="date" name="cadastro_de" class="form-control" value="{{ cadastro_de }}">
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_cadastro_ate">Solicitada até</label>
+    
+            <input id="id_cadastro_ate" type="date" name="cadastro_ate" class="form-control" value="{{ cadastro_ate }}">
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_saida_de">Saída de</label>
+    
+            <input id="id_saida_de" type="date" name="saida_de" class="form-control" value="{{ saida_de }}">
+        </div>
+    
+        <div class="travel-filter-form__field">
+            <label for="id_saida_ate">Saída até</label>
+    
+            <input id="id_saida_ate" type="date" name="saida_ate" class="form-control" value="{{ saida_ate }}">
+        </div>
+    
+        <div class="travel-filter-form__actions">
+            <button type="submit" class="btn btn-primary">
+                Filtrar
+            </button>
+    
+            <a href="{% url 'listar_viagens' %}" class="btn btn-outline-secondary">
+                Limpar
+            </a>
+            
+            <a href="{% url 'exportar_viagens' %}?{{ filtros_query }}" class="btn btn-outline-primary">
+                Exportar CSV
+            </a>
+        </div>
+    </form>
+
+    {% if page_obj %}
+        <div class="travel-list-summary">
+            <span class="travel-list-summary__icon" aria-hidden="true">✓</span>
+
+            <span>
+                Página {{ page_obj.number }} de {{ paginator.num_pages }}
+                {% if paginator.count %}
+                    — {{ paginator.count }} viage{{ paginator.count|pluralize:"m,ns" }} cadastrada{{ paginator.count|pluralize:"s" }}.
+                {% endif %}
+            </span>
+        </div>
+
+        <section class="travel-list">
+            {% for viagem in page_obj %}
+                <article class="travel-card">
+
+                    <header class="travel-card-header">
+                        <div>
+                            <span class="travel-card-label">Destino</span>
+
+                            <h2 class="travel-card-title">
+                                {{ viagem.destino }}
+                            </h2>
+
+                            <p class="travel-card-subtitle">
+                                Saída em {{ viagem.data_ida|date:"d/m/Y" }}
+                                <span aria-hidden="true">•</span>
+                                {{ viagem.setor }}
+                                <span aria-hidden="true">•</span>
+                                {{ viagem.veiculo }}
+                            </p>
+                        </div>
+
+                        {% if viagem.status == "Concluída" %}
+                            <span class="travel-status travel-status--completed">
+                                {{ viagem.status }}
+                            </span>
+                        {% elif viagem.status == "Atribuída" %}
+                            <span class="travel-status travel-status--assigned">
+                                {{ viagem.status }}
+                            </span>
+                        {% else %}
+                            <span class="travel-status travel-status--pending">
+                                {{ viagem.status }}
+                            </span>
+                        {% endif %}
+                    </header>
+
+                    <div class="travel-card-body">
+                    
+                        <section class="travel-details">
+                            {% if viagem.motivo %}
+                            <div class="travel-motivo-banner mb-3 p-3 rounded-3" style="background-color: #f1f6fc; border-left: 4px solid var(--primary); border: 1px solid #d9e5f3; border-left-width: 4px;">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="badge bg-primary text-white" style="font-size: 0.7rem; letter-spacing: 0.05em;">MOTIVO DA VIAGEM</span>
+                                </div>
+                                <p class="mb-0 text-dark fw-medium" style="font-size: 0.95rem; line-height: 1.5;">
+                                    {{ viagem.motivo }}
+                                </p>
+                            </div>
+                            {% endif %}
+
+                            <div class="travel-details-grid travel-details-grid--aligned">
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Servidores participantes</span>
+                    
+                                    <ul class="travel-server-list">
+                                        {% for servidor in viagem.servidores_lista %}
+                                        <li>{{ servidor }}</li>
+                                        {% empty %}
+                                        <li>Não informado</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Processo</span>
+                                    <span class="travel-detail-value">
+                                        {{ viagem.processo|default:"Não informado" }}
+                                    </span>
+                                </div>
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Motorista designado</span>
+                    
+                                    {% if viagem.motorista %}
+                                    <span class="travel-detail-value fw-semibold text-primary">
+                                        👤 {{ viagem.motorista.nome }}
+                                    </span>
+                                    {% else %}
+                                    <span class="travel-detail-value travel-detail-value--empty">
+                                        Não designado
+                                    </span>
+                                    {% endif %}
+                                </div>
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Veículo designado</span>
+                    
+                                    {% if viagem.carro %}
+                                    <span class="travel-detail-value fw-semibold text-primary">
+                                        🚗 {{ viagem.carro }}
+                                    </span>
+                                    {% else %}
+                                    <span class="travel-detail-value travel-detail-value--empty">
+                                        Não designado
+                                    </span>
+                                    {% endif %}
+                                </div>
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Solicitada por</span>
+
+                                    <span class="travel-detail-value">
+                                        {{ viagem.solicitante|default:"Não informado" }}
+                                    </span>
+
+                                    <span class="travel-detail-label" style="margin-top: 4px;">
+                                        Em {{ viagem.criada_em|date:"d/m/Y H:i" }}
+                                    </span>
+                                </div>
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Data de retorno</span>
+                                    <span class="travel-detail-value">
+                                        {{ viagem.data_volta|date:"d/m/Y" }}
+                                    </span>
+                                </div>
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Local de saída</span>
+                                    <span class="travel-detail-value">
+                                        {{ viagem.local_partida|default:"SEMJIDH" }}
+                                    </span>
+                                </div>
+                    
+                                <div class="travel-detail">
+                                    <span class="travel-detail-label">Destino</span>
+                                    <span class="travel-detail-value">
+                                        {{ viagem.destino|default:"Não informado" }}
+                                    </span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <aside class="travel-operation-panel">
+                            <h3>Planejamento e designação</h3>
+
+                            <div class="travel-time-row">
+                                <span>Horário de ida</span>
+                                <strong>{{ viagem.horario_ida|default:"Não definido" }}</strong>
+                            </div>
+
+                            <div class="travel-time-row">
+                                <span>Previsão de retorno</span>
+                                <strong>{{ viagem.horario_volta|default:"Não definido" }}</strong>
+                            </div>
+
+                            <div class="travel-time-row">
+                                <span>Retorno real</span>
+
+                                {% if viagem.horario_volta_real %}
+                                    <strong>
+                                        {{ viagem.horario_volta_real|date:"d/m/Y H:i" }}
+                                    </strong>
+                                {% else %}
+                                    <strong>Não informado</strong>
+                                {% endif %}
+                            </div>
+                            {% if viagem.motorista %}
+                                <form
+                                    method="post"
+                                    action="{% url 'atualizar_volta_real' viagem.id %}"
+                                    class="travel-real-time-form"
+                                >
+                                    {% csrf_token %}
+
+                                    <label for="horario_volta_real_{{ viagem.id }}">
+                                        Registrar data e horário reais da volta
+                                    </label>
+
+                                    <input
+                                        id="horario_volta_real_{{ viagem.id }}"
+                                        type="datetime-local"
+                                        name="horario_volta_real"
+                                        class="form-control"
+                                        value="{{ viagem.horario_volta_real|date:'Y-m-d\TH:i' }}"
+                                        step="60"
+                                        required
+                                    >
+
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Salvar retorno
+                                    </button> 
+                                </form>
+                            {% endif %}
+
+                            <div class="travel-assignment-box">
+                                <div class="travel-assignment-row">
+                                    <span>Motorista</span>
+
+                                    {% if viagem.motorista %}
+                                        <strong>{{ viagem.motorista.nome }}</strong>
+                                    {% else %}
+                                        <strong class="travel-unassigned">Não designado</strong>
+                                    {% endif %}
+                                </div>
+
+                                <div class="travel-assignment-row">
+                                    <span>Veículo</span>
+
+                                    {% if viagem.carro %}
+                                        <strong>{{ viagem.carro }}</strong>
+                                    {% else %}
+                                        <strong class="travel-unassigned">Não designado</strong>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <footer class="travel-card-footer">
+                        <div class="travel-actions">
+                            {% if not viagem.motorista or not viagem.carro %}
+                                <a
+                                    href="{% url 'designar_motorista' viagem.id %}"
+                                    class="btn btn-primary btn-sm"
+                                >
+                                    Designar motorista e carro
+                                </a>
+                            {% else %}
+                                <a
+                                    href="{% url 'designar_motorista' viagem.id %}"
+                                    class="btn btn-outline-primary btn-sm"
+                                >
+                                    Alterar motorista / carro
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <form
+                            action="{% url 'apagar_viagem' viagem.id %}"
+                            method="post"
+                            class="travel-delete-form"
+                            onsubmit="return confirm('Tem certeza de que deseja apagar esta viagem?');"
+                        >
+                            {% csrf_token %}
+
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                Apagar viagem
+                            </button>
+                        </form>
+                    </footer>
+
+                </article>
+            {% endfor %}
+        </section>
+
+    {% else %}
+        <section class="travel-empty-state">
+            <div class="travel-empty-state__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+                    <path d="M16 2v4"></path>
+                    <path d="M8 2v4"></path>
+                    <path d="M3 10h18"></path>
+                    <path d="M8 14h3"></path>
+                    <path d="M8 17h6"></path>
+                </svg>
+            </div>
+
+            <h2>Nenhuma viagem cadastrada</h2>
+
+            <p>
+                Quando uma solicitação for registrada, ela aparecerá nesta lista.
+            </p>
+
+            <a href="{% url 'solicitar_viagem' %}" class="btn btn-primary">
+                Criar primeira solicitação
+            </a>
+        </section>
+    {% endif %}
+
+    {% if paginator.num_pages > 1 %}
+        <nav class="travel-pagination" aria-label="Paginação das viagens">
+            <div class="travel-pagination-actions">
+                {% if page_obj.has_previous %}
+                    <a
+                        href="?page={{ page_obj.previous_page_number }}"
+                        class="btn btn-outline-primary btn-sm"
+                    >
+                        ← Anterior
+                    </a>
+                {% else %}
+                    <span class="btn btn-outline-secondary btn-sm disabled">
+                        ← Anterior
+                    </span>
+                {% endif %}
+
+                {% if page_obj.has_next %}
+                    <a
+                        href="?page={{ page_obj.next_page_number }}"
+                        class="btn btn-outline-primary btn-sm"
+                    >
+                        Próxima →
+                    </a>
+                {% else %}
+                    <span class="btn btn-outline-secondary btn-sm disabled">
+                        Próxima →
+                    </span>
+                {% endif %}
+            </div>
+
+            <form method="get" class="travel-page-select-form">
+                <label for="page_select">Ir para a página</label>
+
+                <select
+                    id="page_select"
+                    name="page"
+                    class="form-select form-select-sm"
+                    onchange="this.form.submit()"
+                >
+                    {% for i in paginator.page_range %}
+                        <option
+                            value="{{ i }}"
+                            {% if page_obj.number == i %}selected{% endif %}
+                        >
+                            Página {{ i }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </nav>
+    {% endif %}
+
+</div>
+{% endblock %}

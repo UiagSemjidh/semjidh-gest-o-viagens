@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}Sistema de Gestão de Viagens | SEMJIDH{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+<body class="app-body">
+
+    <header class="app-header">
+
+        <div class="app-header-top">
+            <div class="container app-header-top-content">
+                <a href="{% url 'home' %}" class="app-brand" aria-label="Ir para a página inicial">
+                    <img src="{% static 'images/logo_600.png' %}" alt="SEMJIDH" class="app-brand-logo">
+                </a>
+
+                <div class="app-system-name">
+                    <span class="app-system-name__eyebrow">SEMJIDH</span>
+                    <strong>Sistema de Gestão de Viagens</strong>
+                </div>
+
+                <div class="app-header-actions">
+                    {% if user.is_authenticated and user.is_superuser %}
+                    <a class="notification-bell" href="{% url 'listar_viagens' %}"
+                        aria-label="{{ total_solicitacoes_pendentes|default:0 }} solicitações pendentes"
+                        title="{{ total_solicitacoes_pendentes|default:0 }} solicitação(ões) pendente(s)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                            stroke-linejoin="round" aria-hidden="true">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                            <path d="M10 21h4"></path>
+                        </svg>
+                
+                        {% if total_solicitacoes_pendentes|default:0 > 0 %}
+                        <span class="notification-bell__badge">
+                            {% if total_solicitacoes_pendentes > 99 %}
+                            99+
+                            {% else %}
+                            {{ total_solicitacoes_pendentes }}
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                
+                        <span class="visually-hidden">
+                            Notificações de solicitações pendentes
+                        </span>
+                    </a>
+                    {% endif %}
+                
+                    <button class="navbar-toggler app-menu-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false"
+                        aria-label="Abrir menu de navegação">
+                        <img src="{% static 'images/menu_icon.png' %}" alt="Menu" class="app-menu-icon-img" width="22" height="22">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="app-navigation navbar navbar-expand-lg" aria-label="Menu principal">
+            <div class="container">
+                <div class="collapse navbar-collapse" id="mainNavigation">
+                    <ul class="navbar-nav app-navigation-list">
+
+                        <li class="nav-item">
+                            <a class="nav-link app-navigation-link" href="{% url 'home' %}">
+                                Início
+                            </a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle app-navigation-link" href="#" id="motoristasMenu"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Motoristas
+                            </a>
+
+                            <ul class="dropdown-menu app-dropdown-menu" aria-labelledby="motoristasMenu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'cadastrar_motorista' %}">
+                                        Cadastrar motorista
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'listar_motoristas' %}">
+                                        Listar motoristas
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle app-navigation-link" href="#" id="veiculosMenu"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Veículos
+                            </a>
+
+                            <ul class="dropdown-menu app-dropdown-menu" aria-labelledby="veiculosMenu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'cadastrar_carro' %}">
+                                        Cadastrar veículo
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'listar_carros' %}">
+                                        Listar veículos
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link app-navigation-link" href="{% url 'listar_viagens' %}">
+                                Viagens
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link app-navigation-link" href="{% url 'exportar_viagens' %}">
+                                Exportar dados
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    </header>
+
+    <main class="app-main">
+        {% if messages %}
+        <div class="container pt-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="app-footer">
+        <div class="container app-footer-content">
+            <p class="mb-0">
+                © {% now "Y" %} SEMJIDH — Sistema de Gestão de Viagens
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

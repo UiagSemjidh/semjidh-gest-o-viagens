@@ -1,0 +1,10 @@
+# Normaliza arquivos de texto no repositório
+* text=auto
+
+# Scripts executados no Linux devem manter LF
+*.sh text eol=lf
+
+# Código e configurações também mantêm LF no repositório
+*.py text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
