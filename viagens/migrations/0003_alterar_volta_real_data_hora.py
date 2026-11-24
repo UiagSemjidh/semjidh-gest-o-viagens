@@ -3,9 +3,7 @@ from django.db import migrations, models
 
 def converter_volta_real(apps, schema_editor):
     if schema_editor.connection.vendor != "postgresql":
-        raise RuntimeError(
-            "Esta migration foi preparada para PostgreSQL/Supabase."
-        )
+        return
 
     Viagem = apps.get_model("viagens", "Viagem")
     banco = schema_editor.connection.alias

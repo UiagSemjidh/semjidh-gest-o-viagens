@@ -75,6 +75,15 @@
                 {% endfor %}
             </select>
         </div>
+
+        <div class="travel-filter-form__field">
+            <label for="id_ordem">Ordenar por data</label>
+
+            <select id="id_ordem" name="ordem" class="form-select">
+                <option value="desc" {% if ordem != "asc" %}selected{% endif %}>Mais recentes primeiro (Decrescente)</option>
+                <option value="asc" {% if ordem == "asc" %}selected{% endif %}>Mais antigas primeiro (Crescente)</option>
+            </select>
+        </div>
     
         <div class="travel-filter-form__field">
             <label for="id_cadastro_de">Solicitada de</label>
@@ -166,6 +175,17 @@
                     <div class="travel-card-body">
                     
                         <section class="travel-details">
+                            {% if viagem.motivo %}
+                            <div class="travel-motivo-banner mb-3 p-3 rounded-3" style="background-color: #f1f6fc; border-left: 4px solid var(--primary); border: 1px solid #d9e5f3; border-left-width: 4px;">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="badge bg-primary text-white" style="font-size: 0.7rem; letter-spacing: 0.05em;">MOTIVO DA VIAGEM</span>
+                                </div>
+                                <p class="mb-0 text-dark fw-medium" style="font-size: 0.95rem; line-height: 1.5;">
+                                    {{ viagem.motivo }}
+                                </p>
+                            </div>
+                            {% endif %}
+
                             <div class="travel-details-grid travel-details-grid--aligned">
                                 <div class="travel-detail">
                                     <span class="travel-detail-label">Servidores participantes</span>
@@ -190,8 +210,8 @@
                                     <span class="travel-detail-label">Motorista designado</span>
                     
                                     {% if viagem.motorista %}
-                                    <span class="travel-detail-value">
-                                        {{ viagem.motorista.nome }}
+                                    <span class="travel-detail-value fw-semibold text-primary">
+                                        👤 {{ viagem.motorista.nome }}
                                     </span>
                                     {% else %}
                                     <span class="travel-detail-value travel-detail-value--empty">
@@ -204,8 +224,8 @@
                                     <span class="travel-detail-label">Veículo designado</span>
                     
                                     {% if viagem.carro %}
-                                    <span class="travel-detail-value">
-                                        {{ viagem.carro }}
+                                    <span class="travel-detail-value fw-semibold text-primary">
+                                        🚗 {{ viagem.carro }}
                                     </span>
                                     {% else %}
                                     <span class="travel-detail-value travel-detail-value--empty">
@@ -221,7 +241,7 @@
                                         {{ viagem.solicitante|default:"Não informado" }}
                                     </span>
 
-                                    <span class="travel-detail-label">
+                                    <span class="travel-detail-label" style="margin-top: 4px;">
                                         Em {{ viagem.criada_em|date:"d/m/Y H:i" }}
                                     </span>
                                 </div>
@@ -327,37 +347,20 @@
 
                     <footer class="travel-card-footer">
                         <div class="travel-actions">
-
-                            {% if not viagem.motorista %}
+                            {% if not viagem.motorista or not viagem.carro %}
                                 <a
                                     href="{% url 'designar_motorista' viagem.id %}"
                                     class="btn btn-primary btn-sm"
                                 >
-                                    Designar motorista
+                                    Designar motorista e carro
                                 </a>
                             {% else %}
                                 <a
                                     href="{% url 'designar_motorista' viagem.id %}"
-                                    class="btn btn-outline-secondary btn-sm"
+                                    class="btn btn-outline-primary btn-sm"
                                 >
-                                    Alterar motorista
+                                    Alterar motorista / carro
                                 </a>
-
-                                {% if not viagem.carro %}
-                                    <a
-                                        href="{% url 'designar_carro' viagem.id %}"
-                                        class="btn btn-info btn-sm"
-                                    >
-                                        Designar carro
-                                    </a>
-                                {% else %}
-                                    <a
-                                        href="{% url 'designar_carro' viagem.id %}"
-                                        class="btn btn-outline-secondary btn-sm"
-                                    >
-                                        Alterar carro
-                                    </a>
-                                {% endif %}
                             {% endif %}
                         </div>
 

@@ -59,11 +59,19 @@ class Viagem(models.Model):
     servidores = models.TextField()
     motorista = models.ForeignKey(Motorista, null=True, blank=True, on_delete=models.SET_NULL)
     solicitante = models.CharField(null=False, blank=False, max_length=30)
+    motivo = models.TextField(verbose_name='Motivo da viagem', default='', blank=False)
     processo = models.CharField(blank=True, null=True, max_length=23)
     
+    STATUS_CHOICES = [
+        ('Pendente', 'Pendente'),
+        ('Atribuída', 'Atribuída'),
+        ('Concluída', 'Concluída'),
+        ('Cancelada', 'Cancelada'),
+    ]
+
     status = models.CharField(
         max_length=20,
-        choices=[('Pendente', 'Pendente'), ('Atribuída', 'Atribuída'), ('Concluída', 'Concluída')],
+        choices=STATUS_CHOICES,
         default='Pendente'
     )
     

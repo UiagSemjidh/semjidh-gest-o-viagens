@@ -81,6 +81,22 @@
                         {% endfor %}
                     </div>
 
+                    <div class="col-12">
+                        <label for="{{ form.motivo.id_for_label }}" class="form-label">
+                            Motivo da viagem <span class="required-mark">*</span>
+                        </label>
+
+                        {{ form.motivo }}
+
+                        <small class="form-help">
+                            Explique a finalidade institucional ou o objetivo da viagem.
+                        </small>
+
+                        {% for error in form.motivo.errors %}
+                            <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
                     <div class="col-12 col-md-6">
                         <label for="{{ form.veiculo.id_for_label }}" class="form-label">
                             Veículo solicitado <span class="required-mark">*</span>

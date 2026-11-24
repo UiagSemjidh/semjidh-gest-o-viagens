@@ -20,20 +20,23 @@ from django import forms
 
 @login_required
 def listar_viagens(request):
-    viagens = Viagem.objects.select_related(
-        "motorista",
-        "carro",
-    ).order_by("-data_ida")
-
     busca = request.GET.get("busca", "").strip()
     status = request.GET.get("status", "")
     setor = request.GET.get("setor", "")
     motorista_id = request.GET.get("motorista", "")
+    ordem = request.GET.get("ordem", "desc")
 
     cadastro_de = request.GET.get("cadastro_de", "")
     cadastro_ate = request.GET.get("cadastro_ate", "")
     saida_de = request.GET.get("saida_de", "")
     saida_ate = request.GET.get("saida_ate", "")
+
+    order_field = "data_ida" if ordem == "asc" else "-data_ida"
+
+    viagens = Viagem.objects.select_related(
+        "motorista",
+        "carro",
+    ).order_by(order_field)
 
     if busca:
         viagens = viagens.filter(
@@ -98,6 +101,7 @@ def listar_viagens(request):
         "paginator": paginator,
         "busca": busca,
         "status_selecionado": status,
+        "ordem": ordem,
         "setor_selecionado": setor,
         "motorista_selecionado": int(motorista_id) if motorista_id.isdigit() else None,
         "cadastro_de": cadastro_de,
@@ -147,18 +151,42 @@ def solicitar_viagem(request):
 
 @login_required
 def designar_motorista(request, viagem_id):
-    viagem = Viagem.objects.get(id=viagem_id)
-    motoristas = Motorista.objects.all()
+    viagem = get_object_or_404(Viagem, id=viagem_id)
+    motoristas = Motorista.objects.all().order_by("nome")
+    carros = Carro.objects.all().order_by("modelo")
+
     if request.method == 'POST':
         motorista_id = request.POST.get('motorista')
-        motorista = Motorista.objects.get(id=motorista_id)
-        viagem.motorista = motorista
-        viagem.status = 'Atribuída'
-        viagem.save()
+        carro_id = request.POST.get('carro')
 
-        messages.success(request, 'Motorista designado com sucesso!')
+        if motorista_id:
+            viagem.motorista = get_object_or_404(Motorista, id=motorista_id)
+        else:
+            viagem.motorista = None
+
+        if carro_id:
+            viagem.carro = get_object_or_404(Carro, id=carro_id)
+        else:
+            viagem.carro = None
+
+        if viagem.motorista or viagem.carro:
+            viagem.status = 'Atribuída'
+        else:
+            viagem.status = 'Pendente'
+
+        viagem.save()
+        messages.success(request, 'Motorista e Veículo atualizados com sucesso!')
         return redirect('listar_viagens')
-    return render(request, 'viagens/designar_motorista.html', {'viagem': viagem, 'motoristas': motoristas})
+
+    return render(
+        request,
+        'viagens/designar_motorista.html',
+        {
+            'viagem': viagem,
+            'motoristas': motoristas,
+            'carros': carros,
+        }
+    )
 
 @login_required
 def cadastrar_motorista(request):

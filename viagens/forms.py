@@ -2,21 +2,34 @@ from django import forms
 from .models import Viagem, Motorista, Carro
 
 class ViagemForm(forms.ModelForm):
+    data_ida = forms.DateField(
+        input_formats=['%Y-%m-%d', '%d/%m/%Y'],
+        widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'})
+    )
+    data_volta = forms.DateField(
+        input_formats=['%Y-%m-%d', '%d/%m/%Y'],
+        widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'})
+    )
+
     class Meta:
         model = Viagem
-        fields = ['destino', 'veiculo','data_ida', 'local_partida', 'horario_ida', 'data_volta', 'horario_volta', 'servidores', 'setor', 'solicitante', 'processo']
+        fields = ['destino', 'motivo', 'veiculo', 'data_ida', 'local_partida', 'horario_ida', 'data_volta', 'horario_volta', 'servidores', 'setor', 'solicitante', 'processo']
         widgets = {
             'destino': forms.TextInput(attrs={
                 'placeholder': 'Digite para onde será a viagem',
                 'type': 'text',
                 'class': 'form-control'
             }),
+            'motivo': forms.Textarea(attrs={
+                'placeholder': 'Descreva detalhadamente a justificativa e o motivo da viagem',
+                'rows': 3,
+                'class': 'form-control'
+            }),
             'veiculo': forms.Select(attrs={
                 'class': 'form-select'
             }),
-            'data_ida': forms.DateInput(format='%d/%m/%Y', attrs={
-                'placeholder': 'DD/MM/YYYY',
-                'type': 'text',
+            'data_ida': forms.DateInput(format='%Y-%m-%d', attrs={
+                'type': 'date',
                 'class': 'form-control'
             }),
             'local_partida': forms.TextInput(attrs={
@@ -29,9 +42,8 @@ class ViagemForm(forms.ModelForm):
                 'type': 'time',
                 'class': 'form-control'
             }),
-            'data_volta': forms.DateInput(format='%d/%m/%Y', attrs={
-                'placeholder': 'DD/MM/YYYY',
-                'type': 'text',
+            'data_volta': forms.DateInput(format='%Y-%m-%d', attrs={
+                'type': 'date',
                 'class': 'form-control'
             }),
             'horario_volta': forms.TimeInput(format='%H:%M', attrs={
