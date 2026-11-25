@@ -91,32 +91,54 @@ class ViagemForm(forms.ModelForm):
         data_ida = cleaned_data.get('data_ida')
         horario_ida = cleaned_data.get('horario_ida')
         data_volta = cleaned_data.get('data_volta')
+        horario_volta = cleaned_data.get('horario_volta')
 
         is_superuser = bool(self.user and self.user.is_authenticated and self.user.is_superuser)
+        agora = timezone.localtime(timezone.now())
+        tz = timezone.get_current_timezone()
 
-        if data_ida and not is_superuser:
-            agora = timezone.localtime(timezone.now())
-            limite_minimo = agora + timedelta(hours=48)
-
+        if data_ida:
             hora_saida = horario_ida or time.min
             dt_saida = timezone.make_aware(
                 datetime.combine(data_ida, hora_saida),
-                timezone.get_current_timezone(),
+                tz,
             )
 
-            if dt_saida < limite_minimo:
-                data_sugerida = limite_minimo.strftime('%d/%m/%Y às %H:%M')
+            if is_superuser:
+                # Superusuário não precisa das 48h, mas não pode agendar no passado
+                # (se não informou horário, permite qualquer horário dentro do dia de hoje)
+                if horario_ida and dt_saida < agora:
+                    self.add_error(
+                        'horario_ida',
+                        'O horário de saída não pode estar no passado.'
+                    )
+                elif not horario_ida and data_ida < agora.date():
+                    self.add_error(
+                        'data_ida',
+                        'A data de saída não pode estar no passado.'
+                    )
+            else:
+                limite_minimo = agora + timedelta(hours=48)
+                if dt_saida < limite_minimo:
+                    data_sugerida = limite_minimo.strftime('%d/%m/%Y às %H:%M')
+                    self.add_error(
+                        'data_ida',
+                        f'A solicitação deve ser feita com pelo menos 48 horas de antecedência '
+                        f'(a partir de {data_sugerida}).'
+                    )
+
+        if data_ida and data_volta:
+            if data_volta < data_ida:
                 self.add_error(
-                    'data_ida',
-                    f'A solicitação deve ser feita com pelo menos 48 horas de antecedência '
-                    f'(a partir de {data_sugerida}).'
+                    'data_volta',
+                    'A data de retorno não pode ser anterior à data de saída.'
                 )
-
-        if data_ida and data_volta and data_volta < data_ida:
-            self.add_error(
-                'data_volta',
-                'A data de retorno não pode ser anterior à data de saída.'
-            )
+            elif data_volta == data_ida and horario_ida and horario_volta:
+                if horario_volta <= horario_ida:
+                    self.add_error(
+                        'horario_volta',
+                        'No mesmo dia, o horário de retorno deve ser posterior ao horário de saída.'
+                    )
 
         return cleaned_data
 
