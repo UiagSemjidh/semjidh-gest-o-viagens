@@ -2247,3 +2247,112 @@ form textarea:focus {
         flex: 1 1 0;
     }
 }
+
+/* =========================================================
+   Barra de ações em massa e controles de status
+   ========================================================= */
+
+#bulk-action-form {
+    width: 100%;
+    max-width: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    border: 1px solid #d6e2ed;
+    border-radius: 12px;
+    background-color: #ffffff !important;
+    box-shadow: var(--shadow-sm);
+}
+
+#bulk-action-form .card-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 16px;
+    padding: 12px 18px !important;
+}
+
+#bulk-action-form .form-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding-left: 0;
+}
+
+#bulk-action-form .form-check-input,
+.travel-card-header .viagem-checkbox {
+    float: none;
+    width: 18px !important;
+    height: 18px !important;
+    min-height: 18px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 0 0 18px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#bulk-action-form .form-check-label {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#bulk-action-select {
+    width: auto !important;
+    min-width: 245px;
+    min-height: 36px !important;
+    padding: 5px 32px 5px 10px !important;
+    font-size: 0.85rem;
+}
+
+#bulk-submit-btn {
+    min-height: 36px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+}
+
+/* Seletor individual de status (Superusuário) */
+.travel-actions form {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.travel-actions form select {
+    width: auto !important;
+    min-width: 170px;
+    min-height: 32px !important;
+    padding: 4px 30px 4px 10px !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+@media (max-width: 575.98px) {
+    #bulk-action-form .card-body {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #bulk-action-form .d-flex.align-items-center.gap-2 {
+        width: 100%;
+    }
+
+    #bulk-action-select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .travel-actions form,
+    .travel-actions form select {
+        width: 100% !important;
+    }
+}

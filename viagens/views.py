@@ -4,22 +4,108 @@ from .models import Viagem, Motorista, Carro
 from .forms import ViagemForm, MotoristaForm, CarroForm
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 import csv
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.db.models import Q
 from django.utils import timezone
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseBadRequest
 from django import forms
-
+from django.views.decorators.http import require_POST
+from viagens.management.commands.auto_cancelar_viagens import cancelar_viagens_expiradas
 
 
 
 @login_required
 def listar_viagens(request):
+    # Cancela automaticamente viagens pendentes que passaram de 30 min da partida
+    cancelar_viagens_expiradas()
+
+    # ==========================================================
+    # PROCESSAMENTO DE POST NA PRÓPRIA PÁGINA (SEM ABRIR OUTRA URL)
+    # ==========================================================
+    if request.method == "POST":
+        tipo_post = request.POST.get("tipo_post", "")
+        status_validos = dict(Viagem.STATUS_CHOICES).keys()
+
+        # 1. Ações em massa
+        if tipo_post == "acao_massa":
+            viagens_ids = request.POST.getlist("viagens_ids")
+            acao = request.POST.get("acao", "").strip()
+
+            if not viagens_ids:
+                messages.warning(request, "Nenhuma viagem foi selecionada.")
+            else:
+                viagens_qs = Viagem.objects.select_related("motorista").filter(id__in=viagens_ids)
+                total = viagens_qs.count()
+
+                if total == 0:
+                    messages.warning(request, "As viagens selecionadas não foram encontradas.")
+                elif acao == "apagar":
+                    for viagem in viagens_qs:
+                        if viagem.motorista and viagem.motorista.email:
+                            try:
+                                send_mail(
+                                    "VIAGEM CANCELADA!",
+                                    (
+                                        f"Uma viagem foi cancelada.\n"
+                                        f"Viagem do dia {viagem.data_ida.strftime('%d/%m/%Y')} "
+                                        f"de destino {viagem.destino} foi cancelada."
+                                    ),
+                                    settings.DEFAULT_FROM_EMAIL,
+                                    [viagem.motorista.email],
+                                    fail_silently=True,
+                                )
+                            except Exception:
+                                pass
+
+                    viagens_qs.delete()
+                    messages.success(
+                        request,
+                        f"{total} viage{'m foi apagada' if total == 1 else 'ns foram apagadas'} com sucesso."
+                    )
+                elif acao.startswith("status_"):
+                    novo_status = acao.replace("status_", "", 1)
+                    if novo_status in status_validos:
+                        viagens_qs.update(status=novo_status)
+                        messages.success(
+                            request,
+                            f"Status de {total} viage{'m alterado' if total == 1 else 'ns alterado'} para '{novo_status}'."
+                        )
+                    else:
+                        messages.error(request, "Status inválido.")
+                else:
+                    messages.error(request, "Ação em massa inválida.")
+
+        # 2. Alteração individual de status pelo superusuário
+        elif tipo_post == "alterar_status_individual":
+            if not request.user.is_superuser:
+                return HttpResponseForbidden("Apenas superusuários podem alterar o status livremente.")
+
+            viagem_id = request.POST.get("viagem_id")
+            novo_status = request.POST.get("status", "").strip()
+
+            if novo_status in status_validos and viagem_id:
+                viagem = get_object_or_404(Viagem, id=viagem_id)
+                viagem.status = novo_status
+                viagem.save(update_fields=["status"])
+                messages.success(
+                    request,
+                    f"Status da viagem para {viagem.destino} alterado para '{novo_status}'."
+                )
+            else:
+                messages.error(request, "Não foi possível alterar o status.")
+
+        query_string = request.GET.urlencode()
+        url_destino = f"{request.path}?{query_string}" if query_string else request.path
+        return redirect(url_destino)
+
+    # ==========================================================
+    # LISTAGEM E FILTROS (GET)
+    # ==========================================================
     busca = request.GET.get("busca", "").strip()
     status = request.GET.get("status", "")
     setor = request.GET.get("setor", "")
@@ -109,6 +195,7 @@ def listar_viagens(request):
         "saida_de": saida_de,
         "saida_ate": saida_ate,
         "setores": Viagem.SETOR_CHOICES,
+        "status_choices": Viagem.STATUS_CHOICES,
         "motoristas": Motorista.objects.order_by("nome"),
         "filtros_query": filtros.urlencode(),
     }
@@ -139,14 +226,15 @@ def editar_motorista(request, motorista_id):
 
 def solicitar_viagem(request):
     if request.method == 'POST':
-        form = ViagemForm(request.POST)
+        form = ViagemForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save() 
-            messages.success(request, 'Viagem solicitada com sucesso!') 
-            return render(request, 'viagens/solicitar_viagem.html', {'form': form}) 
+            form.save()
+            messages.success(request, 'Viagem solicitada com sucesso!')
+            form = ViagemForm(user=request.user)
+            return render(request, 'viagens/solicitar_viagem.html', {'form': form})
     else:
-        form = ViagemForm()
-    
+        form = ViagemForm(user=request.user)
+
     return render(request, 'viagens/solicitar_viagem.html', {'form': form})
 
 @login_required

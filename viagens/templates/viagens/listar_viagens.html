@@ -20,40 +20,30 @@
             Nova solicitação
         </a>
     </div> 
+
     <form method="get" class="travel-filter-form">
         <div class="travel-filter-form__field travel-filter-form__field--search">
             <label for="id_busca">Buscar</label>
-    
             <input id="id_busca" type="search" name="busca" class="form-control" value="{{ busca }}"
                 placeholder="Destino, setor, solicitante ou processo">
         </div>
     
         <div class="travel-filter-form__field">
             <label for="id_status">Status</label>
-    
             <select id="id_status" name="status" class="form-select">
                 <option value="">Todos os status</option>
-    
-                <option value="Pendente" {% if status_selecionado == "Pendente" %}selected{% endif %}>
-                    Pendente
-                </option>
-    
-                <option value="Atribuída" {% if status_selecionado == "Atribuída" %}selected{% endif %}>
-                    Atribuída
-                </option>
-    
-                <option value="Concluída" {% if status_selecionado == "Concluída" %}selected{% endif %}>
-                    Concluída
-                </option>
+                {% for valor, nome in status_choices %}
+                    <option value="{{ valor }}" {% if status_selecionado == valor %}selected{% endif %}>
+                        {{ nome }}
+                    </option>
+                {% endfor %}
             </select>
         </div>
     
         <div class="travel-filter-form__field">
             <label for="id_setor">Setor</label>
-    
             <select id="id_setor" name="setor" class="form-select">
                 <option value="">Todos os setores</option>
-    
                 {% for valor, nome in setores %}
                 <option value="{{ valor }}" {% if setor_selecionado == valor %}selected{% endif %}>
                     {{ nome }}
@@ -64,10 +54,8 @@
     
         <div class="travel-filter-form__field">
             <label for="id_motorista">Motorista</label>
-        
             <select id="id_motorista" name="motorista" class="form-select">
                 <option value="">Todos os motoristas</option>
-        
                 {% for motorista in motoristas %}
                 <option value="{{ motorista.id }}" {% if motorista_selecionado == motorista.id %}selected{% endif %}>
                     {{ motorista.nome }}
@@ -78,7 +66,6 @@
 
         <div class="travel-filter-form__field">
             <label for="id_ordem">Ordenar por data</label>
-
             <select id="id_ordem" name="ordem" class="form-select">
                 <option value="desc" {% if ordem != "asc" %}selected{% endif %}>Mais recentes primeiro (Decrescente)</option>
                 <option value="asc" {% if ordem == "asc" %}selected{% endif %}>Mais antigas primeiro (Crescente)</option>
@@ -87,25 +74,21 @@
     
         <div class="travel-filter-form__field">
             <label for="id_cadastro_de">Solicitada de</label>
-    
             <input id="id_cadastro_de" type="date" name="cadastro_de" class="form-control" value="{{ cadastro_de }}">
         </div>
     
         <div class="travel-filter-form__field">
             <label for="id_cadastro_ate">Solicitada até</label>
-    
             <input id="id_cadastro_ate" type="date" name="cadastro_ate" class="form-control" value="{{ cadastro_ate }}">
         </div>
     
         <div class="travel-filter-form__field">
             <label for="id_saida_de">Saída de</label>
-    
             <input id="id_saida_de" type="date" name="saida_de" class="form-control" value="{{ saida_de }}">
         </div>
     
         <div class="travel-filter-form__field">
             <label for="id_saida_ate">Saída até</label>
-    
             <input id="id_saida_ate" type="date" name="saida_ate" class="form-control" value="{{ saida_ate }}">
         </div>
     
@@ -136,25 +119,79 @@
             </span>
         </div>
 
+        <!-- BARRA DE AÇÕES EM MASSA -->
+        <form
+            id="bulk-action-form"
+            method="post"
+            action=""
+            class="card mb-3 shadow-sm border-0"
+            style="background-color: #f8fafc;"
+        >
+            {% csrf_token %}
+            <input type="hidden" name="tipo_post" value="acao_massa">
+            <div id="bulk-hidden-inputs"></div>
+
+            <div class="card-body py-2 px-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div class="form-check m-0">
+                    <input class="form-check-input" type="checkbox" id="select-all-viagens" style="cursor: pointer;">
+                    <label class="form-check-label fw-semibold" for="select-all-viagens" style="cursor: pointer;">
+                        Selecionar todas da página
+                    </label>
+                    <span id="bulk-selected-count" class="badge bg-secondary ms-2">0 selecionada(s)</span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <select name="acao" id="bulk-action-select" class="form-select form-select-sm" style="min-width: 240px;" required>
+                        <option value="">Escolha uma ação em massa...</option>
+                        <optgroup label="Alterar status para">
+                            {% for valor, nome in status_choices %}
+                                <option value="status_{{ valor }}">Status: {{ nome }}</option>
+                            {% endfor %}
+                        </optgroup>
+                        <optgroup label="Exclusão">
+                            <option value="apagar">Apagar viagens selecionadas</option>
+                        </optgroup>
+                    </select>
+
+                    <button type="submit" id="bulk-submit-btn" class="btn btn-primary btn-sm" disabled>
+                        Aplicar
+                    </button>
+                </div>
+            </div>
+        </form>
+
         <section class="travel-list">
             {% for viagem in page_obj %}
-                <article class="travel-card">
+                <article class="travel-card" data-viagem-card="{{ viagem.id }}">
 
                     <header class="travel-card-header">
-                        <div>
-                            <span class="travel-card-label">Destino</span>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="form-check pt-1">
+                                <input
+                                    class="form-check-input viagem-checkbox"
+                                    type="checkbox"
+                                    value="{{ viagem.id }}"
+                                    id="check_viagem_{{ viagem.id }}"
+                                    aria-label="Selecionar viagem para {{ viagem.destino }}"
+                                    style="width: 1.2rem; height: 1.2rem; cursor: pointer;"
+                                >
+                            </div>
 
-                            <h2 class="travel-card-title">
-                                {{ viagem.destino }}
-                            </h2>
+                            <div>
+                                <span class="travel-card-label">Destino</span>
 
-                            <p class="travel-card-subtitle">
-                                Saída em {{ viagem.data_ida|date:"d/m/Y" }}
-                                <span aria-hidden="true">•</span>
-                                {{ viagem.setor }}
-                                <span aria-hidden="true">•</span>
-                                {{ viagem.veiculo }}
-                            </p>
+                                <h2 class="travel-card-title">
+                                    {{ viagem.destino }}
+                                </h2>
+
+                                <p class="travel-card-subtitle">
+                                    Saída em {{ viagem.data_ida|date:"d/m/Y" }}
+                                    <span aria-hidden="true">•</span>
+                                    {{ viagem.setor }}
+                                    <span aria-hidden="true">•</span>
+                                    {{ viagem.veiculo }}
+                                </p>
+                            </div>
                         </div>
 
                         {% if viagem.status == "Concluída" %}
@@ -163,6 +200,10 @@
                             </span>
                         {% elif viagem.status == "Atribuída" %}
                             <span class="travel-status travel-status--assigned">
+                                {{ viagem.status }}
+                            </span>
+                        {% elif viagem.status == "Cancelada" %}
+                            <span class="travel-status bg-danger text-white">
                                 {{ viagem.status }}
                             </span>
                         {% else %}
@@ -189,7 +230,6 @@
                             <div class="travel-details-grid travel-details-grid--aligned">
                                 <div class="travel-detail">
                                     <span class="travel-detail-label">Servidores participantes</span>
-                    
                                     <ul class="travel-server-list">
                                         {% for servidor in viagem.servidores_lista %}
                                         <li>{{ servidor }}</li>
@@ -208,7 +248,6 @@
                     
                                 <div class="travel-detail">
                                     <span class="travel-detail-label">Motorista designado</span>
-                    
                                     {% if viagem.motorista %}
                                     <span class="travel-detail-value fw-semibold text-primary">
                                         👤 {{ viagem.motorista.nome }}
@@ -222,7 +261,6 @@
                     
                                 <div class="travel-detail">
                                     <span class="travel-detail-label">Veículo designado</span>
-                    
                                     {% if viagem.carro %}
                                     <span class="travel-detail-value fw-semibold text-primary">
                                         🚗 {{ viagem.carro }}
@@ -236,11 +274,9 @@
                     
                                 <div class="travel-detail">
                                     <span class="travel-detail-label">Solicitada por</span>
-
                                     <span class="travel-detail-value">
                                         {{ viagem.solicitante|default:"Não informado" }}
                                     </span>
-
                                     <span class="travel-detail-label" style="margin-top: 4px;">
                                         Em {{ viagem.criada_em|date:"d/m/Y H:i" }}
                                     </span>
@@ -284,7 +320,6 @@
 
                             <div class="travel-time-row">
                                 <span>Retorno real</span>
-
                                 {% if viagem.horario_volta_real %}
                                     <strong>
                                         {{ viagem.horario_volta_real|date:"d/m/Y H:i" }}
@@ -293,6 +328,7 @@
                                     <strong>Não informado</strong>
                                 {% endif %}
                             </div>
+
                             {% if viagem.motorista %}
                                 <form
                                     method="post"
@@ -324,7 +360,6 @@
                             <div class="travel-assignment-box">
                                 <div class="travel-assignment-row">
                                     <span>Motorista</span>
-
                                     {% if viagem.motorista %}
                                         <strong>{{ viagem.motorista.nome }}</strong>
                                     {% else %}
@@ -334,7 +369,6 @@
 
                                 <div class="travel-assignment-row">
                                     <span>Veículo</span>
-
                                     {% if viagem.carro %}
                                         <strong>{{ viagem.carro }}</strong>
                                     {% else %}
@@ -345,8 +379,8 @@
                         </aside>
                     </div>
 
-                    <footer class="travel-card-footer">
-                        <div class="travel-actions">
+                    <footer class="travel-card-footer d-flex flex-wrap align-items-center justify-content-between gap-2">
+                        <div class="travel-actions d-flex flex-wrap align-items-center gap-2">
                             {% if not viagem.motorista or not viagem.carro %}
                                 <a
                                     href="{% url 'designar_motorista' viagem.id %}"
@@ -362,6 +396,31 @@
                                     Alterar motorista / carro
                                 </a>
                             {% endif %}
+
+                            <!-- ALTERAÇÃO LIVRE DE STATUS (APENAS SUPERUSUÁRIO) -->
+                            {% if request.user.is_superuser %}
+                                <form
+                                    method="post"
+                                    action=""
+                                    class="d-inline-flex align-items-center gap-1"
+                                >
+                                    {% csrf_token %}
+                                    <input type="hidden" name="tipo_post" value="alterar_status_individual">
+                                    <input type="hidden" name="viagem_id" value="{{ viagem.id }}">
+                                    <select
+                                        name="status"
+                                        class="form-select form-select-sm"
+                                        aria-label="Alterar status da viagem"
+                                        onchange="this.form.submit()"
+                                    >
+                                        {% for valor, nome in status_choices %}
+                                            <option value="{{ valor }}" {% if viagem.status == valor %}selected{% endif %}>
+                                                Status: {{ nome }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+                            {% endif %}
                         </div>
 
                         <form
@@ -371,7 +430,6 @@
                             onsubmit="return confirm('Tem certeza de que deseja apagar esta viagem?');"
                         >
                             {% csrf_token %}
-
                             <button type="submit" class="btn btn-outline-danger btn-sm">
                                 Apagar viagem
                             </button>
@@ -398,10 +456,7 @@
             </div>
 
             <h2>Nenhuma viagem cadastrada</h2>
-
-            <p>
-                Quando uma solicitação for registrada, ela aparecerá nesta lista.
-            </p>
+            <p>Quando uma solicitação for registrada, ela aparecerá nesta lista.</p>
 
             <a href="{% url 'solicitar_viagem' %}" class="btn btn-primary">
                 Criar primeira solicitação
@@ -414,7 +469,7 @@
             <div class="travel-pagination-actions">
                 {% if page_obj.has_previous %}
                     <a
-                        href="?page={{ page_obj.previous_page_number }}"
+                        href="?page={{ page_obj.previous_page_number }}{% if filtros_query %}&{{ filtros_query }}{% endif %}"
                         class="btn btn-outline-primary btn-sm"
                     >
                         ← Anterior
@@ -427,7 +482,7 @@
 
                 {% if page_obj.has_next %}
                     <a
-                        href="?page={{ page_obj.next_page_number }}"
+                        href="?page={{ page_obj.next_page_number }}{% if filtros_query %}&{{ filtros_query }}{% endif %}"
                         class="btn btn-outline-primary btn-sm"
                     >
                         Próxima →
@@ -441,7 +496,6 @@
 
             <form method="get" class="travel-page-select-form">
                 <label for="page_select">Ir para a página</label>
-
                 <select
                     id="page_select"
                     name="page"
@@ -462,4 +516,74 @@
     {% endif %}
 
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const selectAll = document.getElementById("select-all-viagens");
+    const checkboxes = document.querySelectorAll(".viagem-checkbox");
+    const countBadge = document.getElementById("bulk-selected-count");
+    const submitBtn = document.getElementById("bulk-submit-btn");
+    const bulkForm = document.getElementById("bulk-action-form");
+    const actionSelect = document.getElementById("bulk-action-select");
+    const hiddenInputsContainer = document.getElementById("bulk-hidden-inputs");
+
+    if (!bulkForm) return;
+
+    function updateSelectionState() {
+        const checked = Array.from(checkboxes).filter(cb => cb.checked);
+        const totalChecked = checked.length;
+
+        countBadge.textContent = `${totalChecked} selecionada(s)`;
+        countBadge.className = totalChecked > 0 ? "badge bg-primary ms-2" : "badge bg-secondary ms-2";
+        submitBtn.disabled = totalChecked === 0;
+
+        if (selectAll) {
+            selectAll.checked = checkboxes.length > 0 && totalChecked === checkboxes.length;
+            selectAll.indeterminate = totalChecked > 0 && totalChecked < checkboxes.length;
+        }
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener("change", function () {
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+            updateSelectionState();
+        });
+    }
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener("change", updateSelectionState);
+    });
+
+    bulkForm.addEventListener("submit", function (e) {
+        const checked = Array.from(checkboxes).filter(cb => cb.checked);
+        const acao = actionSelect.value;
+
+        if (checked.length === 0 || !acao) {
+            e.preventDefault();
+            return;
+        }
+
+        if (acao === "apagar") {
+            const confirmado = confirm(
+                `Tem certeza de que deseja apagar ${checked.length} viage${checked.length === 1 ? 'm' : 'ns'} selecionada${checked.length === 1 ? '' : 's'}?`
+            );
+            if (!confirmado) {
+                e.preventDefault();
+                return;
+            }
+        }
+
+        hiddenInputsContainer.innerHTML = "";
+        checked.forEach(cb => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "viagens_ids";
+            input.value = cb.value;
+            hiddenInputsContainer.appendChild(input);
+        });
+    });
+});
+</script>
 {% endblock %}

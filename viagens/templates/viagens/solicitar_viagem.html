@@ -41,6 +41,7 @@
             </p>
 
             <ul class="request-info-list">
+                <li><strong>Antecedência mínima:</strong> solicite com pelo menos 48 horas antes da partida.</li>
                 <li>Confira as datas e os horários.</li>
                 <li>Informe todos os servidores que participarão.</li>
                 <li>Selecione o setor solicitante correto.</li>
@@ -266,4 +267,40 @@
         </form>
     </div>
 </div>
+
+<div
+    id="viagem-form-config"
+    data-ida-id="{{ form.data_ida.id_for_label }}"
+    data-volta-id="{{ form.data_volta.id_for_label }}"
+    data-is-superuser="{{ request.user.is_superuser|yesno:'true,false' }}"
+></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const config = document.getElementById("viagem-form-config");
+    if (!config) return;
+
+    const inputDataIda = document.getElementById(config.dataset.idaId);
+    const inputDataVolta = document.getElementById(config.dataset.voltaId);
+    const isSuperuser = config.dataset.isSuperuser === "true";
+
+    if (inputDataIda) {
+        if (!isSuperuser) {
+            const minDate = new Date(Date.now() + 48 * 60 * 60 * 1000);
+            const yyyy = minDate.getFullYear();
+            const mm = String(minDate.getMonth() + 1).padStart(2, "0");
+            const dd = String(minDate.getDate()).padStart(2, "0");
+            inputDataIda.min = `${yyyy}-${mm}-${dd}`;
+        }
+
+        inputDataIda.addEventListener("change", function () {
+            if (inputDataVolta && inputDataIda.value) {
+                inputDataVolta.min = inputDataIda.value;
+            }
+        });
+    }
+});
+</script>
+
+
 {% endblock %}
