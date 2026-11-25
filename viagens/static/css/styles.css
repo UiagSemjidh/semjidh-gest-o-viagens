@@ -2249,70 +2249,112 @@ form textarea:focus {
 }
 
 /* =========================================================
-   Barra de ações em massa e controles de status
+   Grid Superior: Filtros + Ações em Massa lado a lado
    ========================================================= */
 
-#bulk-action-form {
+.travel-controls-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(290px, 0.75fr);
+    gap: 1.25rem;
+    align-items: stretch;
+    margin: 1.5rem 0 1.25rem;
+}
+
+.travel-controls-grid .travel-filter-form {
+    max-width: none;
+    margin: 0;
+}
+
+.travel-bulk-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
     width: 100%;
     max-width: none;
-    margin: 0 0 1.25rem;
-    padding: 0;
-    border: 1px solid #d6e2ed;
-    border-radius: 12px;
-    background-color: #ffffff !important;
-    box-shadow: var(--shadow-sm);
+    margin: 0;
+    padding: 1.25rem;
+    box-sizing: border-box;
+    border: 1px solid #d9e4ee;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 7px 20px rgba(15, 63, 101, 0.06);
 }
 
-#bulk-action-form .card-body {
+.travel-bulk-panel__header {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 12px 16px;
-    padding: 12px 18px !important;
-}
-
-#bulk-action-form .form-check {
-    display: inline-flex;
-    align-items: center;
     gap: 8px;
-    margin: 0;
-    padding-left: 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e6edf5;
 }
 
-#bulk-action-form .form-check-input,
+.travel-bulk-panel__eyebrow {
+    color: var(--primary);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.travel-bulk-panel__select-all {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #dce6f0;
+    border-radius: 9px;
+    background: #f8fbff;
+}
+
+.travel-bulk-panel__select-all label {
+    margin: 0;
+    color: var(--text);
+    font-size: 0.86rem;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.travel-bulk-panel__select-all input[type="checkbox"],
 .travel-card-header .viagem-checkbox {
-    float: none;
+    float: none !important;
     width: 18px !important;
     height: 18px !important;
+    min-width: 18px !important;
     min-height: 18px !important;
     margin: 0 !important;
     padding: 0 !important;
     flex: 0 0 18px;
+    border: 1.5px solid #94a3b8;
     border-radius: 5px;
     cursor: pointer;
 }
 
-#bulk-action-form .form-check-label {
-    margin: 0;
-    color: var(--text);
+.travel-bulk-panel__field label {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: #526577;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.travel-bulk-panel__field .form-select {
+    width: 100%;
+    min-height: 40px;
     font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
 }
 
-#bulk-action-select {
-    width: auto !important;
-    min-width: 245px;
-    min-height: 36px !important;
-    padding: 5px 32px 5px 10px !important;
-    font-size: 0.85rem;
+.travel-bulk-panel__actions {
+    margin-top: auto;
 }
 
-#bulk-submit-btn {
-    min-height: 36px;
-    padding: 6px 16px;
-    font-size: 0.85rem;
+.travel-bulk-panel__actions .btn {
+    min-height: 40px;
+    font-size: 0.88rem;
 }
 
 /* Seletor individual de status (Superusuário) */
@@ -2336,21 +2378,13 @@ form textarea:focus {
     font-weight: 600;
 }
 
+@media (max-width: 991.98px) {
+    .travel-controls-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 575.98px) {
-    #bulk-action-form .card-body {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    #bulk-action-form .d-flex.align-items-center.gap-2 {
-        width: 100%;
-    }
-
-    #bulk-action-select {
-        flex: 1;
-        min-width: 0;
-    }
-
     .travel-actions form,
     .travel-actions form select {
         width: 100% !important;

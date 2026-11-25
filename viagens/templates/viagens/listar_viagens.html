@@ -21,91 +21,139 @@
         </a>
     </div> 
 
+<div class="travel-controls-grid">
+        
     <form method="get" class="travel-filter-form">
-        <div class="travel-filter-form__field travel-filter-form__field--search">
-            <label for="id_busca">Buscar</label>
-            <input id="id_busca" type="search" name="busca" class="form-control" value="{{ busca }}"
-                placeholder="Destino, setor, solicitante ou processo">
-        </div>
-    
-        <div class="travel-filter-form__field">
-            <label for="id_status">Status</label>
-            <select id="id_status" name="status" class="form-select">
-                <option value="">Todos os status</option>
-                {% for valor, nome in status_choices %}
-                    <option value="{{ valor }}" {% if status_selecionado == valor %}selected{% endif %}>
+            <div class="travel-filter-form__field travel-filter-form__field--search">
+                <label for="id_busca">Buscar</label>
+                <input id="id_busca" type="search" name="busca" class="form-control" value="{{ busca }}"
+                    placeholder="Destino, setor, solicitante ou processo">
+            </div>
+        
+            <div class="travel-filter-form__field">
+                <label for="id_status">Status</label>
+                <select id="id_status" name="status" class="form-select">
+                    <option value="">Todos os status</option>
+                    {% for valor, nome in status_choices %}
+                        <option value="{{ valor }}" {% if status_selecionado == valor %}selected{% endif %}>
+                            {{ nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div class="travel-filter-form__field">
+                <label for="id_setor">Setor</label>
+                <select id="id_setor" name="setor" class="form-select">
+                    <option value="">Todos os setores</option>
+                    {% for valor, nome in setores %}
+                    <option value="{{ valor }}" {% if setor_selecionado == valor %}selected{% endif %}>
                         {{ nome }}
                     </option>
-                {% endfor %}
-            </select>
-        </div>
-    
-        <div class="travel-filter-form__field">
-            <label for="id_setor">Setor</label>
-            <select id="id_setor" name="setor" class="form-select">
-                <option value="">Todos os setores</option>
-                {% for valor, nome in setores %}
-                <option value="{{ valor }}" {% if setor_selecionado == valor %}selected{% endif %}>
-                    {{ nome }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-    
-        <div class="travel-filter-form__field">
-            <label for="id_motorista">Motorista</label>
-            <select id="id_motorista" name="motorista" class="form-select">
-                <option value="">Todos os motoristas</option>
-                {% for motorista in motoristas %}
-                <option value="{{ motorista.id }}" {% if motorista_selecionado == motorista.id %}selected{% endif %}>
-                    {{ motorista.nome }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div class="travel-filter-form__field">
+                <label for="id_motorista">Motorista</label>
+                <select id="id_motorista" name="motorista" class="form-select">
+                    <option value="">Todos os motoristas</option>
+                    {% for motorista in motoristas %}
+                    <option value="{{ motorista.id }}" {% if motorista_selecionado == motorista.id %}selected{% endif %}>
+                        {{ motorista.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <div class="travel-filter-form__field">
-            <label for="id_ordem">Ordenar por data</label>
-            <select id="id_ordem" name="ordem" class="form-select">
-                <option value="desc" {% if ordem != "asc" %}selected{% endif %}>Mais recentes primeiro (Decrescente)</option>
-                <option value="asc" {% if ordem == "asc" %}selected{% endif %}>Mais antigas primeiro (Crescente)</option>
-            </select>
-        </div>
-    
-        <div class="travel-filter-form__field">
-            <label for="id_cadastro_de">Solicitada de</label>
-            <input id="id_cadastro_de" type="date" name="cadastro_de" class="form-control" value="{{ cadastro_de }}">
-        </div>
-    
-        <div class="travel-filter-form__field">
-            <label for="id_cadastro_ate">Solicitada até</label>
-            <input id="id_cadastro_ate" type="date" name="cadastro_ate" class="form-control" value="{{ cadastro_ate }}">
-        </div>
-    
-        <div class="travel-filter-form__field">
-            <label for="id_saida_de">Saída de</label>
-            <input id="id_saida_de" type="date" name="saida_de" class="form-control" value="{{ saida_de }}">
-        </div>
-    
-        <div class="travel-filter-form__field">
-            <label for="id_saida_ate">Saída até</label>
-            <input id="id_saida_ate" type="date" name="saida_ate" class="form-control" value="{{ saida_ate }}">
-        </div>
-    
-        <div class="travel-filter-form__actions">
-            <button type="submit" class="btn btn-primary">
-                Filtrar
-            </button>
-    
-            <a href="{% url 'listar_viagens' %}" class="btn btn-outline-secondary">
-                Limpar
-            </a>
-            
-            <a href="{% url 'exportar_viagens' %}?{{ filtros_query }}" class="btn btn-outline-primary">
-                Exportar CSV
-            </a>
-        </div>
-    </form>
+            <div class="travel-filter-form__field">
+                <label for="id_ordem">Ordenar por data</label>
+                <select id="id_ordem" name="ordem" class="form-select">
+                    <option value="desc" {% if ordem != "asc" %}selected{% endif %}>Mais recentes</option>
+                    <option value="asc" {% if ordem == "asc" %}selected{% endif %}>Mais antigas</option>
+                </select>
+            </div>
+        
+            <div class="travel-filter-form__field">
+                <label for="id_cadastro_de">Solicitada de</label>
+                <input id="id_cadastro_de" type="date" name="cadastro_de" class="form-control" value="{{ cadastro_de }}">
+            </div>
+        
+            <div class="travel-filter-form__field">
+                <label for="id_cadastro_ate">Solicitada até</label>
+                <input id="id_cadastro_ate" type="date" name="cadastro_ate" class="form-control" value="{{ cadastro_ate }}">
+            </div>
+        
+            <div class="travel-filter-form__field">
+                <label for="id_saida_de">Saída de</label>
+                <input id="id_saida_de" type="date" name="saida_de" class="form-control" value="{{ saida_de }}">
+            </div>
+        
+            <div class="travel-filter-form__field">
+                <label for="id_saida_ate">Saída até</label>
+                <input id="id_saida_ate" type="date" name="saida_ate" class="form-control" value="{{ saida_ate }}">
+            </div>
+        
+            <div class="travel-filter-form__actions">
+                <button type="submit" class="btn btn-primary">
+                    Filtrar
+                </button>
+        
+                <a href="{% url 'listar_viagens' %}" class="btn btn-outline-secondary">
+                    Limpar
+                </a>
+                
+                <a href="{% url 'exportar_viagens' %}?{{ filtros_query }}" class="btn btn-outline-primary">
+                    Exportar CSV
+                </a>
+            </div>
+        </form>
+
+        {% if page_obj %}
+        <!-- PAINEL DE AÇÕES EM MASSA AO LADO DOS FILTROS -->
+        <form
+            id="bulk-action-form"
+            method="post"
+            action=""
+            class="travel-bulk-panel"
+        >
+            {% csrf_token %}
+            <input type="hidden" name="tipo_post" value="acao_massa">
+            <div id="bulk-hidden-inputs"></div>
+
+            <div class="travel-bulk-panel__header">
+                <span class="travel-bulk-panel__eyebrow">Ações em massa</span>
+                <span id="bulk-selected-count" class="badge bg-secondary">0 selecionada(s)</span>
+            </div>
+
+            <div class="travel-bulk-panel__select-all">
+                <input class="form-check-input" type="checkbox" id="select-all-viagens">
+                <label for="select-all-viagens">Selecionar todas desta página</label>
+            </div>
+
+            <div class="travel-bulk-panel__field">
+                <label for="bulk-action-select">Ação desejada</label>
+                <select name="acao" id="bulk-action-select" class="form-select" required>
+                    <option value="">Escolha uma ação...</option>
+                    <optgroup label="Alterar status para">
+                        {% for valor, nome in status_choices %}
+                            <option value="status_{{ valor }}">Status: {{ nome }}</option>
+                        {% endfor %}
+                    </optgroup>
+                    <optgroup label="Exclusão">
+                        <option value="apagar">Apagar viagens selecionadas</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="travel-bulk-panel__actions">
+                <button type="submit" id="bulk-submit-btn" class="btn btn-primary w-100" disabled>
+                    Aplicar ação
+                </button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
 
     {% if page_obj %}
         <div class="travel-list-summary">
@@ -118,47 +166,6 @@
                 {% endif %}
             </span>
         </div>
-
-        <!-- BARRA DE AÇÕES EM MASSA -->
-        <form
-            id="bulk-action-form"
-            method="post"
-            action=""
-            class="card mb-3 shadow-sm border-0"
-            style="background-color: #f8fafc;"
-        >
-            {% csrf_token %}
-            <input type="hidden" name="tipo_post" value="acao_massa">
-            <div id="bulk-hidden-inputs"></div>
-
-            <div class="card-body py-2 px-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
-                <div class="form-check m-0">
-                    <input class="form-check-input" type="checkbox" id="select-all-viagens" style="cursor: pointer;">
-                    <label class="form-check-label fw-semibold" for="select-all-viagens" style="cursor: pointer;">
-                        Selecionar todas da página
-                    </label>
-                    <span id="bulk-selected-count" class="badge bg-secondary ms-2">0 selecionada(s)</span>
-                </div>
-
-                <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <select name="acao" id="bulk-action-select" class="form-select form-select-sm" style="min-width: 240px;" required>
-                        <option value="">Escolha uma ação em massa...</option>
-                        <optgroup label="Alterar status para">
-                            {% for valor, nome in status_choices %}
-                                <option value="status_{{ valor }}">Status: {{ nome }}</option>
-                            {% endfor %}
-                        </optgroup>
-                        <optgroup label="Exclusão">
-                            <option value="apagar">Apagar viagens selecionadas</option>
-                        </optgroup>
-                    </select>
-
-                    <button type="submit" id="bulk-submit-btn" class="btn btn-primary btn-sm" disabled>
-                        Aplicar
-                    </button>
-                </div>
-            </div>
-        </form>
 
         <section class="travel-list">
             {% for viagem in page_obj %}
